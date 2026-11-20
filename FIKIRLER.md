@@ -16,14 +16,14 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 - [x] Yarışma kontrolü uygulamanın kendi modeliyle (`print/v3/challenge_check.py --brief`, kütle/KG STL'den) — tüm statik testler geçti; dalga: gap 100 kargo güvertesi kuru (+2.4 mm) ama 0.5 s yan dalgada yalpa rezonansı devrilme payı −1.2° (H 40 mm); gap 70 tüm dalga kontrollerini geçiyor. `wave_motions(x_points=…)` eklendi (+test) (commit 12d156f)
   - Dürüstlük notu: eski brief tablosu sadece T=0.8 s'ye bakıp "✅ su yok" diyordu; ince ızgara gerçek zayıf noktayı gösterdi.
 - [x] Dalga eşik haritası (`print/v3/wave_map.py`) — iki güverte de H ≤ 30 mm'de her periyotta güvenli; risk yalnız T≈0.4–0.5 s & H ≥ 35 mm (yalpa rezonansı), ζ=0.20'de kayboluyor. Karar: yarışma gap 100, yedek gap 70 (commit e92074a)
+- [x] Organizatör baskı sayfası (`print/v3/PRINT_SHEET.md`) — dosya/adet/yön/ayar/kütle/süre (ölçülmüş), paralel baskı süresi, hızlı profil yedeği, CFD dosyası notu, baskı sonrası adımlar (commit TBD)
 
 ## Başarısız
 
 ## Fikir havuzu (henüz yapılmadı)
 | # | Fikir | Fayda | Zorluk | Skor | Not |
 |---|---|---|---|---|---|
-| 3 | Organizatöre tek sayfa baskı sayfası (hangi dosya, kaç adet, yön, ayar, süre/kütle) | 5 | 2 | 8 | yarın 14:00 teslim |
-| 15 | Uygulamadaki v3 varsayılan kütlesini STL'den ölçülen tahmine çek (324 → ölçülen) | 3 | 1 | 5 | #14 sonrası |
+| 15 | Uygulamadaki v3 varsayılan kütle VE KG'sini STL'den ölçülen tahmine çek: şu an KG=0 → %45·70 = 31.5 mm, STL'den 45.4 mm → uygulama GM'i ~14 mm fazla gösteriyor | 5 | 2 | 8 | gerçek hata |
 | 6 | Güverteye yük şeridi/işaret oluğu (ortada ±20/40/60 mm): meyil deneyi ve kargo yerleşimi hızlı ve doğru | 3 | 2 | 4 | ekstrüzyon kesitiyle kolay |
 | 17 | Yalpa rezonansını dalga bandından uzaklaştır (KG/k/gap ayarı) - tasarım seçeneklerini tara | 4 | 3 | 5 | #16 sonrası |
 | 7 | Uygulamada "Yarışma kontrolü" paneli: 150/250/400 g + dalga senaryoları tek tıkla geçti/kaldı tablosu | 4 | 3 | 5 | jüriye tek ekranda kanıt |
