@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# team-internal planning, not part of the submission
+research_notes/
+reports/
