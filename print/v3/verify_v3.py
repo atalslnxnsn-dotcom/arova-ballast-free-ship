@@ -222,14 +222,21 @@ def main():
             if not 0.2 <= clear <= 0.6:
                 fails.append(f"{d.name}: clearance {clear:.2f} mm per side outside 0.2-0.6 mm")
 
-    # 5. CFD file: true clearance = smallest distance from any vertex of one shell to the surface of another
+    # 5. CFD files: true clearance = smallest distance from any vertex of one shell to the surface of another.
+    #    The file meant for the judges' CFD ("CFD_hulls") must pass; the display assembly is only reported.
+    if not any("CFD_hulls" in p.name for p in parts):
+        fails.append("no CFD_hulls file - export the wetted geometry for the judges' CFD")
     for p in [p for p in parts if "CFD" in p.name]:
         sh = sorted(shells(load(p)), key=len)
         gap = min(min(point_tri(v, t) for t in other for v in {q for s in [small] for tr in s for q in tr})
                   for i, small in enumerate(sh) for other in sh[i + 1:]) if len(sh) > 1 else float("inf")
         report.append(f"{p.name}: {len(sh)} shells, smallest clearance between shells {gap:.2f} mm")
         if gap < 0.5:
-            fails.append(f"{p.name}: shells only {gap:.2f} mm apart - CFD meshers may fail or need huge meshes")
+            msg = f"{p.name}: shells only {gap:.2f} mm apart - CFD meshers may fail or need huge meshes"
+            if "CFD_hulls" in p.name:
+                fails.append(msg)
+            else:
+                report.append("  note: " + msg + " -> use it for display only, send the CFD_hulls file to CFD")
 
     print("\n".join(report))
     print("\nFAILED:\n- " + "\n- ".join(fails) if fails else "\nALL CHECKS PASSED")

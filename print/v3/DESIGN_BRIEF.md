@@ -38,8 +38,10 @@ Paste this into the CAD tool (SolidCraft). Units are mm. Reference STLs made fro
 - Tape or glue it on the deck centreline. The boards then sit about 75 mm above the keel, far above the water. Put the battery in a zip bag next to it.
 - Print base-down: no supports.
 
-### 4. CFD file for the judges (not printed)
-- `arova_v3_assembly_gap100_CFD.stl`: both hulls and the deck in sailing position, 235 × 205 × 73 mm, three watertight shells. The deck is lifted 0.1 mm so no faces touch.
+### 4. CFD files for the judges (not printed)
+- **Send `arova_v3_CFD_hulls_gap100.stl` to CFD.** It holds only the wetted geometry: both hulls in sailing position (keel at z = 0, x toward the bow), 235 × 200 × 70 mm, two closed shells 100 mm apart. The deck sits more than 20 mm above the 400 g waterline, so it does not change the resistance result.
+- `arova_v3_assembly_gap100_CFD.stl` is the full ship with the deck, **for display only**. Its deck sits 0.1–0.3 mm from the hulls, a gap CFD meshers often reject or resolve with a huge mesh.
+- `verify_v3.py` checks both files (shells, clearance, watertightness).
 
 ## Challenge check (team app's own model: `hydro.analyse` and `wave_motions`, fresh water, gap 100)
 Assumptions until the real tests:

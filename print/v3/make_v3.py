@@ -218,6 +218,12 @@ if __name__ == "__main__":
     write_stl(out / f"arova_v3_assembly_gap{int(CFD_GAP)}_CFD.stl", [t for p in parts for t in p],
               f"Arova v3 assembly gap {CFD_GAP:.0f} mm - sailing position, for CFD")
     print(f"CFD assembly (gap {CFD_GAP:.0f}): {abox[0]:.0f} x {abox[1]:.0f} x {abox[2]:.1f} mm, 3 watertight shells")
+    # CFD-safe file: only the wetted geometry (two closed hulls, 100 mm apart). The full assembly has the deck
+    # 0.1-0.3 mm from the hulls, which CFD meshers either reject or resolve with a huge cell count; the deck is
+    # >20 mm above the 400 g waterline, so it does not change the resistance result.
+    write_stl(out / f"arova_v3_CFD_hulls_gap{int(CFD_GAP)}.stl", [t for p in parts[:2] for t in p],
+              f"Arova v3 CFD hulls gap {CFD_GAP:.0f} mm - sailing position, keel z=0, x to bow")
+    print(f"CFD hulls file (gap {CFD_GAP:.0f}): 2 watertight shells, {CFD_GAP:.0f} mm apart - send this one to CFD")
 
     T1 = draft_for(2 * hull_g / 2 + 50, 0, n_hulls=1)
     h1 = hydro(T1, 0, n_hulls=1)
