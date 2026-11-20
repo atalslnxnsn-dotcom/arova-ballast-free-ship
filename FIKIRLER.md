@@ -12,6 +12,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
   - Neden sıra değişti: #3 baskı sayfası daha yüksek skorlu ama sayfadaki sayılar kesin geometriye bağlı, önce geometri.
 - [x] Kütle ve baskı süresi tahmini (`print/v3/print_estimate.py`, STL'den alan+hacim) — set: su geçirmez profil 380 g / tek yazıcı ~7–17 sa; hızlı profil 236 g / ~4–11 sa; 4 parça paralel basılırsa en uzun parça ~1.5–5.6 sa (commit a1b8d88)
   - Bulgu: güverte (123 g) neredeyse gövde kadar ağır ve geminin en üstünde → KG'yi yükseltiyor. Havuza #14 eklendi.
+- [x] Güverte 3 → 2 mm — dayanım çift kontrolü (400 g tek nokta yük, 100 mm açıklık, E=2.5 GPa): sehim ~1 mm, 2.9 MPa, 10× pay; güverte 123 → 98 g (su geçirmez profil), 400 g'da GM 117 → 122 mm, fribord 33.7 → 34.9 mm; verify + testler geçti (commit TBD)
 
 ## Başarısız
 
@@ -19,7 +20,6 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 | # | Fikir | Fayda | Zorluk | Skor | Not |
 |---|---|---|---|---|---|
 | 3 | Organizatöre tek sayfa baskı sayfası (hangi dosya, kaç adet, yön, ayar, süre/kütle) | 5 | 2 | 8 | yarın 14:00 teslim |
-| 14 | Güverte plakasını 3 → 2 mm incelt: ~40 g hafif, KG düşer, baskı kısalır; 100 mm açıklıkta 400 g altında sehim ~0.25 mm (PL³/48EI) | 5 | 2 | 8 | önce dayanım çift kontrolü |
 | 15 | Uygulamadaki v3 varsayılan kütlesini STL'den ölçülen tahmine çek (324 → ölçülen) | 3 | 1 | 5 | #14 sonrası |
 | 6 | Güverteye yük şeridi/işaret oluğu (ortada ±20/40/60 mm): meyil deneyi ve kargo yerleşimi hızlı ve doğru | 3 | 2 | 4 | ekstrüzyon kesitiyle kolay |
 | 7 | Uygulamada "Yarışma kontrolü" paneli: 150/250/400 g + dalga senaryoları tek tıkla geçti/kaldı tablosu | 4 | 3 | 5 | jüriye tek ekranda kanıt |

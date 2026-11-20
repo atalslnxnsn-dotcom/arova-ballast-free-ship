@@ -27,7 +27,7 @@ Paste this into the CAD tool (SolidCraft). Units are mm. Reference STLs made fro
 - Print **upside down** (flat top on the bed): no supports. **The STL is already saved in this orientation** - do not rotate it in the slicer (keel-down printing leaves the bow rocker as a 22 cm² unsupported overhang). **3 walls** (1.2 mm) for watertightness, 4 top/bottom layers, 3–5 % gyroid or lightning infill.
 
 ### 2. Clip-on deck (gap 100 = competition; 40 and 70 = optional comparison decks)
-- Flat plate 150 long × 3 thick. It sits on top of both hulls from **x = 27.5 to x = 177.5**, so its centre lies over the centre of buoyancy (x ≈ 102.5).
+- Flat plate 150 long × **2 thick** (checked: 400 g as one point load mid-gap gives ~1 mm sag and 2.9 MPa, a 10× margin on printed PLA; 25 g lighter than 3 mm and lowers the ship's centre of gravity). It sits on top of both hulls from **x = 27.5 to x = 177.5**, so its centre lies over the centre of buoyancy (x ≈ 102.5).
 - Under the plate, at each hull, a **saddle** of two flanges: 12 deep, 2.4 thick, 0.3 clearance each side of the 50 mm hull. The deck slides down over the hulls.
 - Overall width = 2·50 + gap + 2·(0.3 + 2.4): **205 mm** for gap 100 (145 / 175 for gaps 40 / 70).
 - Hold the deck and hulls with 2 rubber bands or zip ties per hull. A drop of glue is OK for the final run.
@@ -42,6 +42,8 @@ Paste this into the CAD tool (SolidCraft). Units are mm. Reference STLs made fro
 - **Send `arova_v3_CFD_hulls_gap100.stl` to CFD.** It holds only the wetted geometry: both hulls in sailing position (keel at z = 0, x toward the bow), 235 × 200 × 70 mm, two closed shells 100 mm apart. The deck sits more than 20 mm above the 400 g waterline, so it does not change the resistance result.
 - `arova_v3_assembly_gap100_CFD.stl` is the full ship with the deck, **for display only**. Its deck sits 0.1–0.3 mm from the hulls, a gap CFD meshers often reject or resolve with a huge mesh.
 - `verify_v3.py` checks both files (shells, clearance, watertightness).
+
+> **Note (night of 20 Nov):** the deck is now 2 mm and the hulls carry a 0.8 mm print chamfer; the challenge-check numbers below are being re-run with the app's model and will be replaced.
 
 ## Challenge check (team app's own model: `hydro.analyse` and `wave_motions`, fresh water, gap 100)
 Assumptions until the real tests:
