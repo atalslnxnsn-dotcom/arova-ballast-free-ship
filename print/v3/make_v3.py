@@ -25,6 +25,7 @@ STERN_B = 40.0                        # mm transom width
 TIP_B = 2.0                           # mm bow tip width (printable, not a knife edge)
 DECK_X0, DECK_X1, DECK_T = 27.5, 177.5, 3.0   # deck span along the hull (centre on the LCB, ~102.5 mm) and thickness
 FLANGE_H, FLANGE_T, FIT = 12.0, 2.4, 0.3      # saddle flange depth, thickness, side clearance
+TOP_CHAMFER = 0.8                     # mm, hull top edges (print-bed edges): elephant-foot relief for the deck fit
 GAPS = (40.0, 70.0, 100.0)            # mm clear gap between hulls
 N_ST, N_ARC = 80, 6                   # stations along x, points per bilge arc
 PLA_RHO_HULL_SHELL = 1.2              # mm shell for mass estimate (3 walls: watertight hulls)
@@ -53,7 +54,8 @@ def section(x):
     for i in range(N_ARC):                       # starboard bilge: bottom -> side
         a = -math.pi / 2 + (math.pi / 2) * i / (N_ARC - 1)
         pts.append((b - r + r * math.cos(a), zk + r + r * math.sin(a)))
-    pts += [(b, D), (-b, D)]
+    c = min(TOP_CHAMFER, b * 0.4)                # 45 deg chamfer on the top edges = the edges on the print bed:
+    pts += [(b, D - c), (b - c, D), (-b + c, D), (-b, D - c)]   # absorbs elephant foot where the deck flanges grip
     for i in range(N_ARC):                       # port bilge: side -> bottom
         a = math.pi + (math.pi / 2) * i / (N_ARC - 1)
         pts.append((-b + r + r * math.cos(a), zk + r + r * math.sin(a)))
