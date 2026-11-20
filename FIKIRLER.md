@@ -6,12 +6,13 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 ## Yapılanlar
 - [x] Bağımsız STL doğrulama aracı (`print/v3/verify_v3.py`) — su geçirmezlik, 250 mm, baskı yönünde sarkma, mesh'ten hacim ile hidrostatik tablo karşılaştırması (en kötü fark %0.15), güverte oturma boşluğu (0.30 mm/yan), CFD kabuk aralığı. İki gerçek sorun buldu (aşağıda havuzda #1 ve #2).
 
+- [x] Demihull STL baskı yönünde — dosya artık düz üst yüzü tablada; dosya yönündeki sarkma 22 cm² → 0 (verify_v3), hidrostatik kontrol değişmedi (%0.15) (commit TBD)
+
 ## Başarısız
 
 ## Fikir havuzu (henüz yapılmadı)
 | # | Fikir | Fayda | Zorluk | Skor | Not |
 |---|---|---|---|---|---|
-| 1 | Demihull STL'sini baskı yönünde (güverte yüzü tablada) dışa aktar; yelken yönündeki kopya sadece CFD/montaj için | 5 | 1 | 9 | verify: 22 cm² sarkma (burun rocker) dosya yönünde |
 | 2 | CFD dosyasını CFD-güvenli yap: tek parça su altı geometrisi (iki gövde) + ayrı tam montaj; 0.1–0.3 mm kabuk aralığı yok | 5 | 2 | 8 | organizatör yazılımı ağ oluştururken patlamasın |
 | 3 | Organizatöre tek sayfa baskı sayfası (hangi dosya, kaç adet, yön, ayar, süre/kütle) | 5 | 2 | 8 | yarın 14:00 teslim |
 | 4 | Fil ayağı payı: gövde güverte yüzü tablada basılınca üst kenar genişler; flanş girişine pah + boşluk 0.3→0.4 | 4 | 2 | 6 | oturma riski |

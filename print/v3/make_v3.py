@@ -172,7 +172,11 @@ if __name__ == "__main__":
     ok, vol, area, bbox = check(hull)
     assert ok, "demihull mesh is not watertight"
     assert max(bbox) <= 250
-    write_stl(out / "arova_v3_demihull_x2.stl", hull, "Arova v3 demihull - PRINT TWO - flat deck side down")
+    # Export in PRINT orientation (flat top on the bed, keel up): keel-down printing leaves the bow rocker and
+    # bilges as unsupported overhangs (verify_v3.py measured 22 cm2). The sailing-orientation hull is only
+    # used inside the assembly/CFD files.
+    hull_print = moved(hull, lambda x, y, z: (x, -y, D - z))   # 180 deg about x: flips z, mirrors y -> no mirror image
+    write_stl(out / "arova_v3_demihull_x2.stl", hull_print, "Arova v3 demihull - PRINT TWO - already in print orientation")
     hull_g = pla_mass_g(vol, area, shell_mm=PLA_RHO_HULL_SHELL, infill=0.05)
     print(f"demihull: watertight={ok}, {bbox[0]:.0f} x {bbox[1]:.0f} x {bbox[2]:.0f} mm, "
           f"solid {vol/1000:.0f} cm3, est. PLA ~{hull_g:.0f} g each (3 walls, 5% infill)")

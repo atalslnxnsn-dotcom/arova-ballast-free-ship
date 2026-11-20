@@ -24,7 +24,7 @@ Paste this into the CAD tool (SolidCraft). Units are mm. Reference STLs made fro
 - **Sections:** sides are **vertical** from the bilge up to the top. Bottom is flat, with a **6 mm bilge radius** on both lower edges. The radius shrinks where the hull narrows at the bow.
 - **Keel rocker:** the keel is flat to x = 185, then rises as 16·((x−185)/50)² mm, reaching 16 mm at the bow tip (wave-piercing bow).
 - Closed solid, no holes, no sockets. Nothing can leak, and water on deck cannot flood it.
-- Print **upside down** (flat top on the bed): no supports. **3 walls** (1.2 mm) for watertightness, 4 top/bottom layers, 3–5 % gyroid or lightning infill.
+- Print **upside down** (flat top on the bed): no supports. **The STL is already saved in this orientation** - do not rotate it in the slicer (keel-down printing leaves the bow rocker as a 22 cm² unsupported overhang). **3 walls** (1.2 mm) for watertightness, 4 top/bottom layers, 3–5 % gyroid or lightning infill.
 
 ### 2. Clip-on deck (gap 100 = competition; 40 and 70 = optional comparison decks)
 - Flat plate 150 long × 3 thick. It sits on top of both hulls from **x = 27.5 to x = 177.5**, so its centre lies over the centre of buoyancy (x ≈ 102.5).
