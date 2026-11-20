@@ -23,8 +23,20 @@ streamlit run app.py
 5. **Validation** - Test A draught vs load, Test B inclining experiment → measured GM → real hull VCG (button to use it),
    Test C roll decay (via tab 4).
 
+## Where each judging criterion is covered
+| Criterion (points) | Where in the app / repo |
+|---|---|
+| Cargo capacity, draught, buoyancy (15) | Tab 1 (load limit, draught, GM, correction), tab 2 (v1 vs v2) |
+| Map-based route planning & decision support (15) | Tab 3 (destination, density map, passage limits, unload advice) |
+| Interface, tilt monitoring, warnings (10) | Tab 4 (heave/pitch/roll, alerts, CSV + roll-decay analysis) |
+| Engineering & validation (20) | Tab 5 (Tests A/B/C), `test_hydro.py`, measured data in `sample_data/` |
+| Working demonstration (20) | Live demo link above |
+
 ## Files
 - `hydro.py` - all calculations, no UI. `app.py` - Streamlit interface. `test_hydro.py` - tests.
+- `print/` - printable box hulls that match the app (v1 monohull, v2 catamaran), print settings in `PRINT_NOTES.md`.
+- `tools/mpu6050_logger/` - Arduino sketch (CSV `t,roll,pitch` at ~100 Hz); `tools/log_serial.py` - saves it to a file.
+- `sample_data/` - sample (simulated, labelled) and measured test data.
 
 ## Method & assumptions (labels: calculated / simulated / measured / estimated)
 | Item | Model | Status |
