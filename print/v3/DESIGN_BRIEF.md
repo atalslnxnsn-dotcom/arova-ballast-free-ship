@@ -105,6 +105,14 @@ Fresh water 15 °C; masses and centres of gravity measured from the STL files (w
 
 **1 hull alone (monohull baseline)**: 125 g + 50 g on top → GM -28.6 mm (tips over) - the 'why a catamaran' demo.
 
+## Which deck for which waves (`python3 print/v3/wave_map.py`)
+Map over wave height 5–40 mm × period 0.4–1.6 s, 250 g and 400 g, roll damping 0.10 and 0.20, 300 mm tank depth:
+- **Both decks are safe at every period up to H = 30 mm** (cargo deck dry, roll well below the windward-hull lift-off angle).
+- The only risk is a narrow band, **T ≈ 0.4–0.5 s with H ≥ 35 mm**, at the catamaran's own roll period (0.41–0.49 s for gap 100). With damping 0.20 it disappears.
+- **Use gap 100 for the competition.** It has the best static stability (400 g placed 20 mm off-centre gives 5.6° heel, against 11.1° with gap 70).
+- Keep the **gap 70 deck as a backup**. Swap to it only if the organisers announce very short, steep beam waves (period about 0.5 s, height 35 mm or more).
+- Ask at check-in: wave height, wave period, and the tank depth.
+
 ## Why this shape wins (pitch points)
 - **CFD and waves:**
   - Slender hulls (L/B ≈ 4.7 each) with a tangent fine entry and a wave-piercing rocker bow cut wave resistance and slamming.
