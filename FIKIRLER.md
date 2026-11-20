@@ -10,7 +10,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 - [x] CFD-güvenli dosya — `arova_v3_CFD_hulls_gap100.stl` (yalnız ıslak geometri, 2 kabuk 100 mm aralıkla); eski montaj dosyası sadece görsel; verify_v3 artık TÜM KONTROLLER GEÇTİ (commit 937e867)
 - [x] Fil ayağı payı — gövdenin tablaya gelen üst kenarlarına 0.8 mm × 45° pah (tabla yüzünde genişlik 48.4 → 0.8 mm'de 50.0); güverte flanşı 0.30 mm boşlukla sıkışmaz; hidrostatik etkisiz (su hattının 30+ mm üstü) (commit 5e95dc7)
   - Neden sıra değişti: #3 baskı sayfası daha yüksek skorlu ama sayfadaki sayılar kesin geometriye bağlı, önce geometri.
-- [x] Kütle ve baskı süresi tahmini (`print/v3/print_estimate.py`, STL'den alan+hacim) — set: su geçirmez profil 380 g / tek yazıcı ~7–17 sa; hızlı profil 236 g / ~4–11 sa; 4 parça paralel basılırsa en uzun parça ~1.5–5.6 sa (commit TBD)
+- [x] Kütle ve baskı süresi tahmini (`print/v3/print_estimate.py`, STL'den alan+hacim) — set: su geçirmez profil 380 g / tek yazıcı ~7–17 sa; hızlı profil 236 g / ~4–11 sa; 4 parça paralel basılırsa en uzun parça ~1.5–5.6 sa (commit a1b8d88)
   - Bulgu: güverte (123 g) neredeyse gövde kadar ağır ve geminin en üstünde → KG'yi yükseltiyor. Havuza #14 eklendi.
 
 ## Başarısız
