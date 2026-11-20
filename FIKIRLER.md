@@ -8,7 +8,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 
 - [x] Demihull STL baskı yönünde — dosya artık düz üst yüzü tablada; dosya yönündeki sarkma 22 cm² → 0 (verify_v3), hidrostatik kontrol değişmedi (%0.15) (commit 7869fa6)
 - [x] CFD-güvenli dosya — `arova_v3_CFD_hulls_gap100.stl` (yalnız ıslak geometri, 2 kabuk 100 mm aralıkla); eski montaj dosyası sadece görsel; verify_v3 artık TÜM KONTROLLER GEÇTİ (commit 937e867)
-- [x] Fil ayağı payı — gövdenin tablaya gelen üst kenarlarına 0.8 mm × 45° pah (tabla yüzünde genişlik 48.4 → 0.8 mm'de 50.0); güverte flanşı 0.30 mm boşlukla sıkışmaz; hidrostatik etkisiz (su hattının 30+ mm üstü) (commit TBD)
+- [x] Fil ayağı payı — gövdenin tablaya gelen üst kenarlarına 0.8 mm × 45° pah (tabla yüzünde genişlik 48.4 → 0.8 mm'de 50.0); güverte flanşı 0.30 mm boşlukla sıkışmaz; hidrostatik etkisiz (su hattının 30+ mm üstü) (commit 5e95dc7)
   - Neden sıra değişti: #3 baskı sayfası daha yüksek skorlu ama sayfadaki sayılar kesin geometriye bağlı, önce geometri.
 
 ## Başarısız
