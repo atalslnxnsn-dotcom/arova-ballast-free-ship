@@ -1282,7 +1282,12 @@
      1.7092175588541123e-06,
      3.546033416425455e-05
     ]
-   ]
+   ],
+   "estimate": {
+    "mass_kg": 0.125,
+    "kg_m": 0.03601,
+    "source": "print_estimate.py, watertight profile"
+   }
   },
   "2 hulls, gap 40 mm": {
    "n_hulls": 2,
@@ -2548,7 +2553,12 @@
      4.3054842271360166e-05,
      7.09206683285091e-05
     ]
-   ]
+   ],
+   "estimate": {
+    "mass_kg": 0.3254,
+    "kg_m": 0.04367,
+    "source": "print_estimate.py, watertight profile"
+   }
   },
   "2 hulls, gap 70 mm": {
    "n_hulls": 2,
@@ -3814,7 +3824,12 @@
      7.388315894642278e-05,
      7.09206683285091e-05
     ]
-   ]
+   ],
+   "estimate": {
+    "mass_kg": 0.3366,
+    "kg_m": 0.04457,
+    "source": "print_estimate.py, watertight profile"
+   }
   },
   "2 hulls, gap 100 mm": {
    "n_hulls": 2,
@@ -5080,7 +5095,12 @@
      0.00011351956610007472,
      7.09206683285091e-05
     ]
-   ]
+   ],
+   "estimate": {
+    "mass_kg": 0.3478,
+    "kg_m": 0.04542,
+    "source": "print_estimate.py, watertight profile"
+   }
   }
  }
 }

@@ -16,48 +16,16 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT))
-from verify_v3 import load, shells, volume, cross, sub  # noqa: E402
-from print_estimate import estimate, PLA, PROFILES      # noqa: E402
+from print_estimate import mass_kg_estimate             # noqa: E402
 from hydro import Cargo, analyse, load_limit, wave_motions, seawater_density, load_v3_hull  # noqa: E402
 import make_v3 as v3                                     # noqa: E402
 
 RHO = seawater_density(0, 15)
 LIM = dict(min_freeboard_m=0.010, max_heel_deg=5.0, min_gm_m=0.005)
-PROFILE = PROFILES["watertight (3 walls, 5% gyroid)"]
-
-
-def area_centroid_z(tris):
-    a_sum = z_sum = 0.0
-    for a, b, c in tris:
-        ar = sum(x * x for x in cross(sub(b, a), sub(c, a))) ** 0.5 / 2
-        a_sum += ar
-        z_sum += ar * (a[2] + b[2] + c[2]) / 3
-    return z_sum / a_sum
-
-
-def volume_centroid_z(tris):
-    v = m = 0.0
-    for a, b, c in tris:
-        d = volume([(a, b, c)])
-        v += d
-        m += d * (a[2] + b[2] + c[2]) / 4      # tetra with apex at the origin (z=0)
-    return m / v
 
 
 def ship(cfg="2 hulls, gap 100 mm", electronics=False):
-    hull_t = load(HERE / "arova_v3_demihull_x2.stl")             # print orientation: keel at z = D
-    zc_hull = v3.D - area_centroid_z(hull_t)                     # -> height above keel when sailing
-    m_hull = estimate(hull_t, **PROFILE) * PLA / 1000             # kg
-    parts = [(2 * m_hull if cfg.startswith("2") else m_hull, zc_hull)]
-    if cfg.startswith("2"):
-        gap = cfg.split("gap ")[1].split()[0]
-        deck_t = load(HERE / f"arova_v3_deck_gap{gap}.stl")      # plate on the bed (z=0), flanges up
-        zc_deck = v3.D + v3.DECK_T - volume_centroid_z(deck_t)   # flipped onto the hulls
-        parts.append((estimate(deck_t, **PROFILE) * PLA / 1000, zc_deck))
-    if electronics:
-        parts.append((0.040, v3.D + v3.DECK_T + 15 if cfg.startswith("2") else v3.D + 15))
-    m = sum(p[0] for p in parts)
-    kg = sum(p[0] * p[1] for p in parts) / m / 1000
+    m, kg = mass_kg_estimate(cfg, electronics)
     return load_v3_hull(cfg, m, kg), m, kg
 
 

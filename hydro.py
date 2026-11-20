@@ -620,6 +620,10 @@ def load_v3_hull(config: str, mass: float, kg_hull: float = 0.0, k_roll: float =
     g, cfg = data["geometry"], data["configs"][config]
     n, gap = cfg["n_hulls"], cfg["gap_m"]
     overall = n * g["demihull_beam_m"] + (n - 1) * gap
+    # No measured KG -> the print-based estimate (STL), not "45 % of depth": a shell hull with a deck on top
+    # carries its mass high (45 mm vs 31.5 mm for the 70 mm hull); the guess overstated GM by ~14 mm empty,
+    # ~6.5 mm with 400 g on board.
+    kg_hull = kg_hull or cfg.get("estimate", {}).get("kg_m", 0.0)
     return Hull(f"v3 {config}", g["length_m"], g["demihull_beam_m"], g["depth_m"], n, gap, mass, kg_hull, k_roll,
                 table=tuple(tuple(r) for r in cfg["rows"]),
                 # empty-ship LCG ~ centroid of the solid hull = LCB at full depth (fine bow puts both aft)
@@ -628,6 +632,14 @@ def load_v3_hull(config: str, mass: float, kg_hull: float = 0.0, k_roll: float =
                 deck_len=g["deck_length_m"] if n == 2 else 0.0,
                 deck_beam=overall + 2 * g["flange_m"] if n == 2 else 0.0,
                 deck_xc=g["deck_centre_x_from_midship_m"] if n == 2 else 0.0)
+
+
+def v3_estimates(path=None):
+    """{config: (mass kg, KG m)} print-based estimates stored with the table."""
+    import json
+    from pathlib import Path
+    data = json.loads(Path(path or Path(__file__).parent / "data" / "v3_hydrostatics.json").read_text())
+    return {k: (c["estimate"]["mass_kg"], c["estimate"]["kg_m"]) for k, c in data["configs"].items() if "estimate" in c}
 
 
 def v3_configs(path=None):

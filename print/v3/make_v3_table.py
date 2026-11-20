@@ -68,6 +68,12 @@ if __name__ == "__main__":
     out["configs"]["1 hull (monohull test)"] = dict(n_hulls=1, gap_m=0.0, rows=table(1, 0.0))
     for gap in v3.GAPS:
         out["configs"][f"2 hulls, gap {gap:.0f} mm"] = dict(n_hulls=2, gap_m=gap / 1e3, rows=table(2, gap))
+    # Print-based mass and KG per configuration (from the STL files), used by the app until the parts are weighed
+    # and the inclining test gives the real KG. Run make_v3.py first so the STL files are current.
+    from print_estimate import mass_kg_estimate
+    for name, cfg in out["configs"].items():
+        m, kg = mass_kg_estimate(name)
+        cfg["estimate"] = dict(mass_kg=round(m, 4), kg_m=round(kg, 5), source="print_estimate.py, watertight profile")
     dest = HERE.parents[1] / "data" / "v3_hydrostatics.json"
     dest.parent.mkdir(exist_ok=True)
     dest.write_text(json.dumps(out, indent=1))

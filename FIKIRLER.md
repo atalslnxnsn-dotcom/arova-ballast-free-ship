@@ -17,13 +17,14 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
   - Dürüstlük notu: eski brief tablosu sadece T=0.8 s'ye bakıp "✅ su yok" diyordu; ince ızgara gerçek zayıf noktayı gösterdi.
 - [x] Dalga eşik haritası (`print/v3/wave_map.py`) — iki güverte de H ≤ 30 mm'de her periyotta güvenli; risk yalnız T≈0.4–0.5 s & H ≥ 35 mm (yalpa rezonansı), ζ=0.20'de kayboluyor. Karar: yarışma gap 100, yedek gap 70 (commit e92074a)
 - [x] Organizatör baskı sayfası (`print/v3/PRINT_SHEET.md`) — dosya/adet/yön/ayar/kütle/süre (ölçülmüş), paralel baskı süresi, hızlı profil yedeği, CFD dosyası notu, baskı sonrası adımlar (commit b0535c0)
+- [x] Uygulamadaki v3 KG hatası düzeltildi — ölçülmüş KG yokken "%45 derinlik" (31.5 mm) yerine STL'den tahmin (45.4 mm, gap 100); GM boşta ~14 mm, 400 g'da ~6.5 mm fazla gösteriliyordu. Kütle/KG tahmini tek kaynakta (`print_estimate.mass_kg_estimate`), tabloya yazılıyor; varsayılan kütle 348 g (+test) (commit TBD)
+  - Düzeltme: ilk iddiam "GM ~14 mm fazla" idi; test gösterdi ki 400 g'da fark KG farkı × gövde kütle payı = ~6.5 mm.
 
 ## Başarısız
 
 ## Fikir havuzu (henüz yapılmadı)
 | # | Fikir | Fayda | Zorluk | Skor | Not |
 |---|---|---|---|---|---|
-| 15 | Uygulamadaki v3 varsayılan kütle VE KG'sini STL'den ölçülen tahmine çek: şu an KG=0 → %45·70 = 31.5 mm, STL'den 45.4 mm → uygulama GM'i ~14 mm fazla gösteriyor | 5 | 2 | 8 | gerçek hata |
 | 6 | Güverteye yük şeridi/işaret oluğu (ortada ±20/40/60 mm): meyil deneyi ve kargo yerleşimi hızlı ve doğru | 3 | 2 | 4 | ekstrüzyon kesitiyle kolay |
 | 17 | Yalpa rezonansını dalga bandından uzaklaştır (KG/k/gap ayarı) - tasarım seçeneklerini tara | 4 | 3 | 5 | #16 sonrası |
 | 7 | Uygulamada "Yarışma kontrolü" paneli: 150/250/400 g + dalga senaryoları tek tıkla geçti/kaldı tablosu | 4 | 3 | 5 | jüriye tek ekranda kanıt |

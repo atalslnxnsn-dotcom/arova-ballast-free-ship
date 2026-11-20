@@ -13,7 +13,7 @@ import streamlit as st
 from hydro import (Hull, Cargo, analyse, seawater_density, WATER_PRESETS, ROUTES_BY_DEST, route_profile,
                    suggest_rebalance, simulate_roll, roll_stats, drag_force, load_limit, check_suggestion,
                    pick_route, wave_motions, roll_decay, k_from_period, inclining_gm, unload_to_fit,
-                   load_v3_hull, v3_configs, check_layout)
+                   load_v3_hull, v3_configs, v3_estimates, check_layout)
 from dataclasses import replace
 
 
@@ -41,9 +41,10 @@ with st.sidebar:
                 cfg = st.selectbox("Printed configuration", cfgs, index=len(cfgs) - 1 if key == "rev" else 0,
                                    key=key + "cfg", help="Same two demihulls; the deck sets the gap. Gap 100 mm is "
                                    "the competition set-up; one hull alone is the monohull baseline.")
-                # print estimates (3 walls, 5 % infill): 121 g per demihull + 62/72/82 g deck - weigh the real parts
-                est = {"40": 304, "70": 314, "100": 324}.get(cfg.split("gap ")[-1].split()[0], 121)
-                mass = st.number_input("Assembled model mass (g) - weigh it", 10, 2000, est, key=key + "m3" + cfg)
+                # print-based estimate from the STL files (data/v3_hydrostatics.json) - weigh the real parts
+                est_m, est_kg = v3_estimates().get(cfg, (0.3, 0.0))
+                mass = st.number_input("Assembled model mass (g) - weigh it", 10, 2000, round(est_m * 1000),
+                                       key=key + "m3" + cfg)
             else:
                 L = st.number_input("Pontoon length (mm)", 50, 250, L, key=key + "L")
                 B = st.number_input("Pontoon beam (mm)", 10, 250, B, key=key + "B")
@@ -54,7 +55,11 @@ with st.sidebar:
                                  key=key + "kg", help="Use the inclining-test result (tab 5).")
             kr = st.number_input("Roll radius of gyration k (mm, 0 = 0.4 x beam estimate)", 0.0, 400.0, 0.0, 0.5,
                                  key=key + "kr", help="Use the roll-decay result (tab 4, CSV).")
-            st.caption(f"VCG: **{'measured' if kg else 'estimated'}** · k: **{'measured' if kr else 'estimated'}**")
+            if n == 3:
+                st.caption(f"VCG: **{'measured' if kg else f'estimated from the STL files ({est_kg*1000:.1f} mm)'}** · "
+                           f"k: **{'measured' if kr else 'estimated'}**")
+            else:
+                st.caption(f"VCG: **{'measured' if kg else 'estimated'}** · k: **{'measured' if kr else 'estimated'}**")
             if n == 3:
                 h = load_v3_hull(cfg, mass / 1000, kg / 1000, kr / 1000)
                 st.caption(f"Exact hydrostatics from the printed shape (data/v3_hydrostatics.json): "

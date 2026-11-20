@@ -266,3 +266,14 @@ print("v3 LCG test passed")
 mx = wave_motions(cat, rc, 0.02, 0.6, 0.3, x_points=(cat.length / 2, -cat.length / 2, 0.0))
 assert isclose(max(mx["rel_at"][cat.length / 2], mx["rel_at"][-cat.length / 2]), mx["rel_motion_m"])
 print("x_points test passed")
+# 8) v3 without a measured KG uses the STL-based estimate, not 45 % of depth (which overstated GM by ~14 mm)
+from hydro import v3_estimates
+m_est, kg_est = v3_estimates()["2 hulls, gap 100 mm"]
+h_est = load_v3_hull("2 hulls, gap 100 mm", m_est)
+assert isclose(h_est.vcg, kg_est) and kg_est > 0.45 * h_est.depth
+h_old = replace(h_est, kg_hull=0.0)                       # the old default
+load400 = [Cargo("load", 0.4, h_est.deck_xc, 0, 0.06, 0.06, 0.03)]
+# GM error = KG error x hull-mass share: ~14 mm empty, ~6.5 mm with 400 g on board
+assert analyse(h_old, [], 1000).gm - analyse(h_est, [], 1000).gm > 0.012
+assert analyse(h_old, load400, 1000).gm - analyse(h_est, load400, 1000).gm > 0.005
+print("v3 KG estimate test passed")
