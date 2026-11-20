@@ -16,7 +16,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 - [x] Yarışma kontrolü uygulamanın kendi modeliyle (`print/v3/challenge_check.py --brief`, kütle/KG STL'den) — tüm statik testler geçti; dalga: gap 100 kargo güvertesi kuru (+2.4 mm) ama 0.5 s yan dalgada yalpa rezonansı devrilme payı −1.2° (H 40 mm); gap 70 tüm dalga kontrollerini geçiyor. `wave_motions(x_points=…)` eklendi (+test) (commit 12d156f)
   - Dürüstlük notu: eski brief tablosu sadece T=0.8 s'ye bakıp "✅ su yok" diyordu; ince ızgara gerçek zayıf noktayı gösterdi.
 - [x] Dalga eşik haritası (`print/v3/wave_map.py`) — iki güverte de H ≤ 30 mm'de her periyotta güvenli; risk yalnız T≈0.4–0.5 s & H ≥ 35 mm (yalpa rezonansı), ζ=0.20'de kayboluyor. Karar: yarışma gap 100, yedek gap 70 (commit e92074a)
-- [x] Organizatör baskı sayfası (`print/v3/PRINT_SHEET.md`) — dosya/adet/yön/ayar/kütle/süre (ölçülmüş), paralel baskı süresi, hızlı profil yedeği, CFD dosyası notu, baskı sonrası adımlar (commit TBD)
+- [x] Organizatör baskı sayfası (`print/v3/PRINT_SHEET.md`) — dosya/adet/yön/ayar/kütle/süre (ölçülmüş), paralel baskı süresi, hızlı profil yedeği, CFD dosyası notu, baskı sonrası adımlar (commit b0535c0)
 
 ## Başarısız
 
