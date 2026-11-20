@@ -20,6 +20,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 - [x] Uygulamadaki v3 KG hatası düzeltildi — ölçülmüş KG yokken "%45 derinlik" (31.5 mm) yerine STL'den tahmin (45.4 mm, gap 100); GM boşta ~14 mm, 400 g'da ~6.5 mm fazla gösteriliyordu. Kütle/KG tahmini tek kaynakta (`print_estimate.mass_kg_estimate`), tabloya yazılıyor; varsayılan kütle 348 g (+test) (commit 1070368)
   - Düzeltme: ilk iddiam "GM ~14 mm fazla" idi; test gösterdi ki 400 g'da fark KG farkı × gövde kütle payı = ~6.5 mm.
 - [x] Kanıta dayalı tasarım gerekçesi (`print/v3/DESIGN_RATIONALE.md`) — her iddia ya betik çıktısına (adıyla) ya kaynağa bağlı; kaynaksızlar "tasarım niyeti" olarak işaretli (commit c347bbf)
+- [x] Hidrostatik tablonun TÜM sütunları mesh'ten çapraz kontrol (`verify_v3.py`: su hattı kesiti Green teoremi + batık hacim ağırlık merkezi; kutu üzerinde birebir öz-kontrol) — KB 0.00 mm, LCB 0.12 mm, Awp %0.12, I_T %0.14, I_L %0.35; "STL yükle → tablo" fikrinin ilk adımı (commit TBD)
 
 ## Başarısız
 
@@ -33,4 +34,4 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 | 9 | Kapalı gövde içinde hava genleşmesi/su alma riski notu ve vernik prosedürü | 2 | 1 | 3 | |
 | 10 | Gövde baş-kıç simetrik değil: kargo konumu LCB'ye göre işaretli "yükleme çizgisi" güvertede | 3 | 2 | 4 | #6 ile birleşebilir |
 | 11 | Monohull karşılaştırma için tek gövde + 50 g sabit demo kartı (devrilir/dik durur) | 3 | 1 | 5 | sunum anı |
-| 12 | Cesur: uygulamada STL yükle → otomatik hidrostatik tablo (herhangi bir gövde için) | 5 | 4 | 6 | büyük; ilk adımı ayrı tur |
+| 12 | Cesur: uygulamada STL yükle → otomatik hidrostatik tablo (herhangi bir gövde için) | 5 | 3 | 7 | ilk adım yapıldı: mesh'ten KB/LCB/Awp/I_T/I_L fonksiyonları verify_v3'te hazır |

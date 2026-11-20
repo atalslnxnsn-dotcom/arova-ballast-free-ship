@@ -164,6 +164,45 @@ def point_tri(p, tri):
     return math.dist(p, q)
 
 
+def submerged_centroid(tris, z0):
+    """(volume, centroid) of the closed mesh below z = z0. Tetrahedra from an apex on the plane: cap adds nothing."""
+    apex = (0.0, 0.0, z0)
+    v = 0.0
+    m = [0.0, 0.0, 0.0]
+    for t in (c for t in tris for c in clip_below(t, z0)):
+        d = volume([t], apex)
+        v += d
+        for k in range(3):
+            m[k] += d * (apex[k] + t[0][k] + t[1][k] + t[2][k]) / 4
+    return v, [mk / v for mk in m]
+
+
+def waterplane(tris, z0):
+    """Area, centroid x, and second moments of the mesh's cross-section at z = z0 (Green's theorem on the cut
+    segments, each oriented so the solid lies to its left: tangent along (-n_y, n_x) of the outward normal)."""
+    A = Sx = Ixx_y = Iyy_x = 0.0      # A, int x dA, int y^2 dA, int x^2 dA
+    for t in tris:
+        pts = []
+        for i in range(3):
+            p, q = t[i], t[(i + 1) % 3]
+            if (p[2] - z0) * (q[2] - z0) < 0:
+                f = (z0 - p[2]) / (q[2] - p[2])
+                pts.append((p[0] + f * (q[0] - p[0]), p[1] + f * (q[1] - p[1])))
+        if len(pts) != 2:
+            continue
+        n = cross(sub(t[1], t[0]), sub(t[2], t[0]))
+        (x1, y1), (x2, y2) = pts
+        if (x2 - x1) * (-n[1]) + (y2 - y1) * n[0] < 0:
+            (x1, y1), (x2, y2) = (x2, y2), (x1, y1)
+        c = x1 * y2 - x2 * y1
+        A += c / 2
+        Sx += c * (x1 + x2) / 6
+        Ixx_y += c * (y1 * y1 + y1 * y2 + y2 * y2) / 12
+        Iyy_x += c * (x1 * x1 + x1 * x2 + x2 * x2) / 12
+    xc = Sx / A
+    return A, xc, Ixx_y, Iyy_x - A * xc * xc     # I_T about the centreline, I_L about the LCF
+
+
 def main():
     fails = []
     report = []
@@ -208,6 +247,25 @@ def main():
         report.append(f"hydrostatics: mesh volume vs table at {len(tab[9::10])} draughts, worst difference {worst*100:.2f} %")
         if worst > 0.01:
             fails.append(f"hydrostatic table differs from the hull mesh by {worst*100:.2f} %")
+        # Every other column the app uses (KB, LCB, waterplane area, I_T, I_L), at working draughts 15-55 mm
+        L_mid = (hi[0] + lo[0]) / 2
+        dev = {"KB mm": 0.0, "LCB mm": 0.0, "Awp %": 0.0, "I_T %": 0.0, "I_L %": 0.0}
+        for row in [r for r in tab if 0.015 <= r[0] <= 0.055][::8]:
+            T, _, KB, LCB, Awp, IT, IL = row
+            z0 = lo[2] + T * 1000
+            _, cen = submerged_centroid(sail, z0)
+            A, _, it, il = waterplane(sail, z0)
+            dev["KB mm"] = max(dev["KB mm"], abs((cen[2] - lo[2]) - KB * 1000))
+            dev["LCB mm"] = max(dev["LCB mm"], abs((cen[0] - L_mid) - LCB * 1000))
+            dev["Awp %"] = max(dev["Awp %"], abs(A / (Awp * 1e6) - 1) * 100)
+            dev["I_T %"] = max(dev["I_T %"], abs(it / (IT * 1e12) - 1) * 100)
+            dev["I_L %"] = max(dev["I_L %"], abs(il / (IL * 1e12) - 1) * 100)
+        report.append("hydrostatics: mesh vs table, worst over draughts 15-55 mm: "
+                      + ", ".join(f"{k.split()[0]} {v:.2f} {k.split()[1]}" for k, v in dev.items()))
+        limits = {"KB mm": 0.5, "LCB mm": 1.0, "Awp %": 2.0, "I_T %": 3.0, "I_L %": 3.0}
+        for k, v in dev.items():
+            if v > limits[k]:
+                fails.append(f"hydrostatic {k.split()[0]} differs from the mesh by {v:.2f} {k.split()[1]} (limit {limits[k]})")
         # 4. deck fit: hull width over the deck span, deck slot width at mid-flange height
         h_w = width_at(sail, hi[2] - lo[2] - 6 + lo[2], 30, 150)
         for d in [p for p in parts if "deck_gap" in p.name]:
