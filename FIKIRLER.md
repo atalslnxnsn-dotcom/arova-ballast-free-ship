@@ -19,6 +19,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 - [x] Organizatör baskı sayfası (`print/v3/PRINT_SHEET.md`) — dosya/adet/yön/ayar/kütle/süre (ölçülmüş), paralel baskı süresi, hızlı profil yedeği, CFD dosyası notu, baskı sonrası adımlar (commit b0535c0)
 - [x] Uygulamadaki v3 KG hatası düzeltildi — ölçülmüş KG yokken "%45 derinlik" (31.5 mm) yerine STL'den tahmin (45.4 mm, gap 100); GM boşta ~14 mm, 400 g'da ~6.5 mm fazla gösteriliyordu. Kütle/KG tahmini tek kaynakta (`print_estimate.mass_kg_estimate`), tabloya yazılıyor; varsayılan kütle 348 g (+test) (commit 1070368)
   - Düzeltme: ilk iddiam "GM ~14 mm fazla" idi; test gösterdi ki 400 g'da fark KG farkı × gövde kütle payı = ~6.5 mm.
+- [x] Kanıta dayalı tasarım gerekçesi (`print/v3/DESIGN_RATIONALE.md`) — her iddia ya betik çıktısına (adıyla) ya kaynağa bağlı; kaynaksızlar "tasarım niyeti" olarak işaretli (commit TBD)
 
 ## Başarısız
 
@@ -28,7 +29,6 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 | 6 | Güverteye yük şeridi/işaret oluğu (ortada ±20/40/60 mm): meyil deneyi ve kargo yerleşimi hızlı ve doğru | 3 | 2 | 4 | ekstrüzyon kesitiyle kolay |
 | 17 | Yalpa rezonansını dalga bandından uzaklaştır (KG/k/gap ayarı) - tasarım seçeneklerini tara | 4 | 3 | 5 | #16 sonrası |
 | 7 | Uygulamada "Yarışma kontrolü" paneli: 150/250/400 g + dalga senaryoları tek tıkla geçti/kaldı tablosu | 4 | 3 | 5 | jüriye tek ekranda kanıt |
-| 8 | Tasarım gerekçesi sayfası (neden katamaran, neden ince gövde, neden dalga kesici burun; kaynaklarla) | 4 | 2 | 6 | sunum + inovasyon puanı |
 | 13 | Eski `arova_v3_assembly_gap100_CFD.stl` adını `..._display.stl` yap (ad yanıltıcı; gece kuralı: var olan dosya silinmez) | 3 | 1 | 5 | sabah kullanıcı kararı |
 | 9 | Kapalı gövde içinde hava genleşmesi/su alma riski notu ve vernik prosedürü | 2 | 1 | 3 | |
 | 10 | Gövde baş-kıç simetrik değil: kargo konumu LCB'ye göre işaretli "yükleme çizgisi" güvertede | 3 | 2 | 4 | #6 ile birleşebilir |
