@@ -226,3 +226,35 @@ except ValueError:
     pass
 
 print("all hydro tests passed")
+
+# ---------- table hulls (printed v3) ----------
+from hydro import hydrostatics_at, load_v3_hull, v3_configs
+# 1) A box written as a table must reproduce the wall-sided formulas exactly
+Awp, It, Il = cat.waterplane_area, cat.i_transverse, cat.i_longitudinal
+box_rows = tuple((T, Awp * T, T / 2, 0.0, Awp, It, Il) for T in [i * 0.0005 for i in range(1, 111)])
+cat_tab = replace(cat, table=box_rows)
+for load in (centre, off, []):
+    a_, b_ = analyse(cat, load, 1000), analyse(cat_tab, load, 1000)
+    assert isclose(a_.draft, b_.draft, rel_tol=1e-9) and isclose(a_.gm, b_.gm, rel_tol=1e-9)
+    assert isclose(a_.gm_long, b_.gm_long, rel_tol=1e-9) and isclose(a_.reserve_buoyancy_kg, b_.reserve_buoyancy_kg)
+# 2) v3 table agrees with make_v3's own draught solver (gap 70: 251 g ship + 250 g -> 25.3 mm)
+assert "2 hulls, gap 70 mm" in v3_configs()
+v3 = load_v3_hull("2 hulls, gap 70 mm", mass=0.251)
+r3 = analyse(v3, [Cargo("load", 0.25, v3.deck_xc, 0, 0.05, 0.04, 0.025)], 1000)
+assert abs(r3.draft * 1000 - 25.3) < 0.4, r3.draft
+assert r3.lcb < 0                                             # fine bow -> buoyancy centre aft of midship
+# 3) Trim is measured against the LCB, and the rebalance suggestion levels the v3 hull
+items3 = [Cargo("a", 0.2, v3.deck_xc + 0.03, 0.01, 0.04, 0.04, 0.02)]
+r3a = analyse(v3, items3, 1000)
+nm, ny, nx = suggest_rebalance(items3, r3a.total_mass, r3a.ycg, r3a.xcg - r3a.lcb)
+items3[0].x, items3[0].y = nx, ny
+lev = analyse(v3, items3, 1000)
+assert abs(lev.trim_deg) < 0.2 and abs(lev.heel_deg) < 1e-6, (lev.trim_deg, lev.heel_deg)
+# 4) The deck is shorter than the hulls and sits aft: a box near the bow is off the deck
+assert check_layout(v3, [Cargo("bow", 0.1, 0.09, 0, 0.04, 0.04, 0.02)])
+assert not check_layout(v3, [Cargo("mid", 0.1, v3.deck_xc, 0, 0.04, 0.04, 0.02)])
+# 5) One demihull alone (monohull test) is much less stable than the catamaran
+r1 = analyse(load_v3_hull("1 hull (monohull test)", mass=0.09), [Cargo("w", 0.05, 0, 0, 0.03, 0.03, 0.01)], 1000)
+assert r1.gm < r3.gm
+
+print("table hull tests passed")

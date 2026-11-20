@@ -40,6 +40,13 @@ class Hull:
     mass: float = 0.25     # kg, empty printed model incl. electronics
     kg_hull: float = 0.0   # m, empty-ship VCG above keel; 0 -> depth*0.45 (replace with inclining result)
     k_roll: float = 0.0    # m, roll radius of gyration; 0 -> 0.40*overall beam (replace with roll-decay result)
+    # Optional exact hydrostatics for a non-box hull (e.g. the printed v3): rows of
+    # (T, V, KB, LCB from midship, Awp, I_T, I_L about LCF), SI units, increasing T. None -> wall-sided box model.
+    table: tuple = None
+    deck_h: float = 0.0     # m, height of the cargo deck above the keel; 0 -> depth
+    deck_len: float = 0.0   # m, usable deck length; 0 -> length
+    deck_beam: float = 0.0  # m, usable deck width; 0 -> overall beam
+    deck_xc: float = 0.0    # m, deck centre from midship (+ bow)
 
     @property
     def overall_beam(self):
@@ -65,6 +72,39 @@ class Hull:
     @property
     def vcg(self):
         return self.kg_hull or self.depth * 0.45
+
+    @property
+    def deck_top(self):
+        return self.deck_h or self.depth
+
+    @property
+    def max_volume(self):
+        """Displaced volume with the hull immersed to its depth (m^3)."""
+        return self.table[-1][1] if self.table else self.waterplane_area * self.depth
+
+
+def hydrostatics_at(hull: Hull, V: float):
+    """(T, KB, LCB, Awp, I_T, I_L) for displaced volume V. Box formulas, or linear interpolation in hull.table.
+
+    Beyond the table the hull is extrapolated wall-sided, which only matters for the SINKS warning.
+    """
+    if not hull.table:
+        T = V / hull.waterplane_area
+        return T, T / 2, 0.0, hull.waterplane_area, hull.i_transverse, hull.i_longitudinal
+    rows = hull.table
+    if V >= rows[-1][1]:
+        r = rows[-1]
+        return (r[0] + (V - r[1]) / r[4],) + tuple(r[2:])
+    if V <= rows[0][1]:
+        r, f = rows[0], V / rows[0][1]
+        return (r[0] * f, r[2] * f, r[3], r[4], r[5], r[6])
+    lo, hi = 0, len(rows) - 1
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        lo, hi = (mid, hi) if rows[mid][1] <= V else (lo, mid)
+    a, b = rows[lo], rows[hi]
+    f = (V - a[1]) / (b[1] - a[1])
+    return tuple(a[k] + f * (b[k] - a[k]) for k in (0, 2, 3, 4, 5, 6))
 
 
 @dataclass
@@ -97,15 +137,16 @@ class Result:
     reserve_buoyancy_kg: float
     roll_period: float
     warnings: list = field(default_factory=list)
+    lcb: float = 0.0          # m, longitudinal centre of buoyancy from midship (0 for box hulls)
 
 
 def check_layout(hull: Hull, cargo: list) -> list:
     """Out-of-bounds and overlap checks on the deck footprint."""
     msgs = []
-    half_l, half_b = hull.length / 2, hull.overall_beam / 2
+    dl, db = hull.deck_len or hull.length, hull.deck_beam or hull.overall_beam
     for c in cargo:
-        if abs(c.x) + c.lx / 2 > half_l + 1e-9 or abs(c.y) + c.ly / 2 > half_b + 1e-9:
-            msgs.append(f"'{c.name}' is outside the deck ({hull.length*1000:.0f} x {hull.overall_beam*1000:.0f} mm).")
+        if abs(c.x - hull.deck_xc) + c.lx / 2 > dl / 2 + 1e-9 or abs(c.y) + c.ly / 2 > db / 2 + 1e-9:
+            msgs.append(f"'{c.name}' is outside the deck ({dl*1000:.0f} x {db*1000:.0f} mm).")
     for i, a in enumerate(cargo):
         for b in cargo[i + 1:]:
             if abs(a.x - b.x) < (a.lx + b.lx) / 2 - 1e-9 and abs(a.y - b.y) < (a.ly + b.ly) / 2 - 1e-9:
@@ -116,28 +157,27 @@ def check_layout(hull: Hull, cargo: list) -> list:
 def analyse(hull: Hull, cargo: list, rho: float,
             min_freeboard_m=0.010, max_heel_deg=5.0, min_gm_m=0.005) -> Result:
     items = [(hull.mass, 0.0, 0.0, hull.vcg)] + [
-        (c.mass, c.x, c.y, hull.depth + c.lz / 2) for c in cargo]
+        (c.mass, c.x, c.y, hull.deck_top + c.lz / 2) for c in cargo]
     M = sum(m for m, *_ in items)
     xcg = sum(m * x for m, x, _, _ in items) / M
     ycg = sum(m * y for m, _, y, _ in items) / M
     zcg = sum(m * z for m, _, _, z in items) / M
 
     V = M / rho                                    # Archimedes: V = M / rho
-    T = V / hull.waterplane_area                   # wall-sided pontoons
-    kb = T / 2
-    bm = hull.i_transverse / V
+    T, kb, lcb, _, i_t, i_l = hydrostatics_at(hull, V)   # wall-sided box, or the hull's own table
+    bm = i_t / V
     gm = kb + bm - zcg
-    gm_l = kb + hull.i_longitudinal / V - zcg
+    gm_l = kb + i_l / V - zcg
 
     heel = degrees(atan(ycg / gm)) if gm > 0 else float("nan")   # heel = atan(yCG/GM)
-    trim = degrees(atan(xcg / gm_l)) if gm_l > 0 else float("nan")
+    trim = degrees(atan((xcg - lcb) / gm_l)) if gm_l > 0 else float("nan")   # trim lever: CG ahead of LCB
     fb = hull.depth - T
     edge = hull.overall_beam / 2
     if gm > 0 and gm_l > 0:
         min_fb = fb - edge * abs(tan(radians(heel))) - hull.length / 2 * abs(tan(radians(trim)))
     else:
         min_fb = 0.0  # unstable: assume capsize, deck edge at the water
-    reserve = (hull.waterplane_area * hull.depth * rho) - M
+    reserve = hull.max_volume * rho - M
     k_roll = hull.k_roll or 0.40 * hull.overall_beam   # measured, else common first estimate
     roll_T = 2 * pi * k_roll / sqrt(G * gm) if gm > 0 else float("nan")
 
@@ -158,7 +198,7 @@ def analyse(hull: Hull, cargo: list, rho: float,
         w.append(f"Lowest freeboard {min_fb*1000:.1f} mm below {min_freeboard_m*1000:.0f} mm limit (water on deck risk).")
     if heel == heel and abs(radians(heel)) > atan(2 * fb / hull.overall_beam):
         w.append("Deck edge immersed: small-angle model no longer valid.")
-    return Result(M, V, T, fb, xcg, ycg, zcg, kb, bm, gm, gm_l, heel, trim, min_fb, reserve, roll_T, w)
+    return Result(M, V, T, fb, xcg, ycg, zcg, kb, bm, gm, gm_l, heel, trim, min_fb, reserve, roll_T, w, lcb)
 
 
 def suggest_rebalance(cargo: list, total_mass: float, ycg: float, xcg: float):
@@ -570,3 +610,25 @@ def roll_stats(t, roll):
 def drag_force(rho, cd, area_m2, speed_ms):
     """First-pass drag F = 0.5*rho*Cd*A*v^2 (N)."""
     return 0.5 * rho * cd * area_m2 * speed_ms**2
+
+
+def load_v3_hull(config: str, mass: float, kg_hull: float = 0.0, k_roll: float = 0.0, path=None) -> Hull:
+    """The printed v3 wave-piercer as a table hull. config: a key of data/v3_hydrostatics.json["configs"]."""
+    import json
+    from pathlib import Path
+    data = json.loads(Path(path or Path(__file__).parent / "data" / "v3_hydrostatics.json").read_text())
+    g, cfg = data["geometry"], data["configs"][config]
+    n, gap = cfg["n_hulls"], cfg["gap_m"]
+    overall = n * g["demihull_beam_m"] + (n - 1) * gap
+    return Hull(f"v3 {config}", g["length_m"], g["demihull_beam_m"], g["depth_m"], n, gap, mass, kg_hull, k_roll,
+                table=tuple(tuple(r) for r in cfg["rows"]),
+                deck_h=g["deck_top_m"] if n == 2 else g["depth_m"],
+                deck_len=g["deck_length_m"] if n == 2 else 0.0,
+                deck_beam=overall + 2 * g["flange_m"] if n == 2 else 0.0,
+                deck_xc=g["deck_centre_x_from_midship_m"] if n == 2 else 0.0)
+
+
+def v3_configs(path=None):
+    import json
+    from pathlib import Path
+    return list(json.loads(Path(path or Path(__file__).parent / "data" / "v3_hydrostatics.json").read_text())["configs"])

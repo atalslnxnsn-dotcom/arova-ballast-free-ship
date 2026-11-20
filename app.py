@@ -12,7 +12,9 @@ import streamlit as st
 
 from hydro import (Hull, Cargo, analyse, seawater_density, WATER_PRESETS, ROUTES_BY_DEST, route_profile,
                    suggest_rebalance, simulate_roll, roll_stats, drag_force, load_limit, check_suggestion,
-                   pick_route, wave_motions, roll_decay, k_from_period, inclining_gm, unload_to_fit)
+                   pick_route, wave_motions, roll_decay, k_from_period, inclining_gm, unload_to_fit,
+                   load_v3_hull, v3_configs, check_layout)
+from dataclasses import replace
 
 
 def set_state(key, value):
@@ -29,20 +31,35 @@ st.caption("Cargo & stability, hull comparison, route planning and roll monitori
 with st.sidebar:
     st.header("Hull versions")
 
+    TYPES = {1: "Box monohull", 2: "Box catamaran", 3: "v3 wave-piercer (printed)"}
+
     def hull_inputs(key, name, n, L, B, D, gap, mass):
         with st.expander(name, expanded=key == "rev"):
-            n = st.radio("Type", [1, 2], index=n - 1, horizontal=True, key=key + "n",
-                         format_func=lambda v: "Monohull" if v == 1 else "Catamaran")
-            L = st.number_input("Pontoon length (mm)", 50, 250, L, key=key + "L")
-            B = st.number_input("Pontoon beam (mm)", 10, 250, B, key=key + "B")
-            D = st.number_input("Hull depth (mm)", 10, 150, D, key=key + "D")
-            gap = st.number_input("Gap between pontoons (mm)", 0, 200, gap, key=key + "g", disabled=n == 1)
-            mass = st.number_input("Empty model mass (g)", 10, 2000, mass, key=key + "m")
+            n = st.radio("Type", list(TYPES), index=n - 1, key=key + "n", format_func=TYPES.get)
+            if n == 3:
+                cfg = st.selectbox("Printed configuration", v3_configs(), index=2 if key == "rev" else 0,
+                                   key=key + "cfg", help="Same two demihulls; the deck sets the gap. "
+                                   "One hull alone is the monohull baseline.")
+                mass = st.number_input("Assembled model mass (g) - weigh it", 10, 2000,
+                                       251 if cfg.startswith("2") else 90, key=key + "m3")
+            else:
+                L = st.number_input("Pontoon length (mm)", 50, 250, L, key=key + "L")
+                B = st.number_input("Pontoon beam (mm)", 10, 250, B, key=key + "B")
+                D = st.number_input("Hull depth (mm)", 10, 150, D, key=key + "D")
+                gap = st.number_input("Gap between pontoons (mm)", 0, 200, gap, key=key + "g", disabled=n == 1)
+                mass = st.number_input("Empty model mass (g)", 10, 2000, mass, key=key + "m")
             kg = st.number_input("Empty-hull VCG above keel (mm, 0 = 45% depth estimate)", 0.0, 300.0, 0.0, 0.5,
                                  key=key + "kg", help="Use the inclining-test result (tab 5).")
             kr = st.number_input("Roll radius of gyration k (mm, 0 = 0.4 x beam estimate)", 0.0, 400.0, 0.0, 0.5,
                                  key=key + "kr", help="Use the roll-decay result (tab 4, CSV).")
             st.caption(f"VCG: **{'measured' if kg else 'estimated'}** · k: **{'measured' if kr else 'estimated'}**")
+            if n == 3:
+                h = load_v3_hull(cfg, mass / 1000, kg / 1000, kr / 1000)
+                st.caption(f"Exact hydrostatics from the printed shape (data/v3_hydrostatics.json): "
+                           f"{h.length*1000:.0f} × {h.overall_beam*1000:.0f} × {h.depth*1000:.0f} mm"
+                           + (f", deck {h.deck_len*1000:.0f} × {h.deck_beam*1000:.0f} mm at "
+                              f"{h.deck_top*1000:.0f} mm" if h.deck_len else "") + ".")
+                return replace(h, name=name)
             ov = n * B + (n - 1) * gap
             if max(L, ov, D) > 250:
                 st.error("Exceeds the 250 x 250 x 250 mm print limit.")
@@ -98,6 +115,9 @@ def deck_plot(hull, cargo, res, title):
         yc = (k - (hull.n_pontoons - 1) / 2) * (hull.beam + hull.gap) * 1000
         fig.add_shape(type="rect", x0=-half_l, x1=half_l, y0=yc - hull.beam * 500, y1=yc + hull.beam * 500,
                       line=dict(color="#4a7bd0"), fillcolor="rgba(74,123,208,0.15)")
+    if hull.deck_len:                                  # separate (shorter) deck, e.g. the printed v3
+        fig.add_shape(type="rect", x0=(hull.deck_xc - hull.deck_len / 2) * 1000, x1=(hull.deck_xc + hull.deck_len / 2) * 1000,
+                      y0=-hull.deck_beam * 500, y1=hull.deck_beam * 500, line=dict(color="#8a6d3b", dash="dot"))
     for c in cargo:
         fig.add_shape(type="rect", x0=(c.x - c.lx / 2) * 1000, x1=(c.x + c.lx / 2) * 1000,
                       y0=(c.y - c.ly / 2) * 1000, y1=(c.y + c.ly / 2) * 1000,
@@ -151,6 +171,15 @@ with tab_cargo:
     cargo = to_cargo(edited)
     hull_choice = st.radio("Analyse hull", ["Revised (v2)", "Baseline (v1)"], horizontal=True)
     hull = rev if hull_choice.startswith("Revised") else base
+    if hull.deck_len and any(check_layout(hull, [c]) for c in cargo):
+        def fit_to_deck(df, h=hull):
+            """Squeeze the x positions onto this hull's shorter deck (keeps order and spacing ratio)."""
+            df = df.copy()
+            df["x_mm"] = (h.deck_xc + df["x_mm"] / 1000 * h.deck_len / h.length) * 1000
+            st.session_state.cargo = df.round({"x_mm": 0}).reset_index(drop=True)
+            st.session_state.pop("cargo_editor", None)
+        st.button(f"Move cargo onto the {hull.deck_len*1000:.0f} mm deck of {hull.name}",
+                  on_click=fit_to_deck, args=(edited,))
     res = analyse(hull, cargo, rho, **lim)
 
     c1, c2, c3, c4, c5 = st.columns(5)
@@ -171,7 +200,7 @@ with tab_cargo:
                    f"limit is hit → **{why}**  ·  Sinking reserve: {res.reserve_buoyancy_kg*1000:.0f} g.")
     show_warnings(res)
 
-    sug = suggest_rebalance(cargo, res.total_mass, res.ycg, res.xcg)
+    sug = suggest_rebalance(cargo, res.total_mass, res.ycg, res.xcg - res.lcb)   # level = CG over the LCB
     if sug and (abs(res.ycg) > 1e-4 or abs(res.xcg) > 1e-4):
         name, ny, nx = sug
         nx, ny = round(nx * 1000) / 1000, round(ny * 1000) / 1000
