@@ -13,7 +13,7 @@ Not: Codex kotası 22 Kasım 23:28'e kadar dolu; ikinci görüş yerine bağıms
 - [x] Kütle ve baskı süresi tahmini (`print/v3/print_estimate.py`, STL'den alan+hacim) — set: su geçirmez profil 380 g / tek yazıcı ~7–17 sa; hızlı profil 236 g / ~4–11 sa; 4 parça paralel basılırsa en uzun parça ~1.5–5.6 sa (commit a1b8d88)
   - Bulgu: güverte (123 g) neredeyse gövde kadar ağır ve geminin en üstünde → KG'yi yükseltiyor. Havuza #14 eklendi.
 - [x] Güverte 3 → 2 mm — dayanım çift kontrolü (400 g tek nokta yük, 100 mm açıklık, E=2.5 GPa): sehim ~1 mm, 2.9 MPa, 10× pay; güverte 123 → 98 g (su geçirmez profil), 400 g'da GM 117 → 122 mm, fribord 33.7 → 34.9 mm; verify + testler geçti (commit a779f20)
-- [x] Yarışma kontrolü uygulamanın kendi modeliyle (`print/v3/challenge_check.py --brief`, kütle/KG STL'den) — tüm statik testler geçti; dalga: gap 100 kargo güvertesi kuru (+2.4 mm) ama 0.5 s yan dalgada yalpa rezonansı devrilme payı −1.2° (H 40 mm); gap 70 tüm dalga kontrollerini geçiyor. `wave_motions(x_points=…)` eklendi (+test) (commit TBD)
+- [x] Yarışma kontrolü uygulamanın kendi modeliyle (`print/v3/challenge_check.py --brief`, kütle/KG STL'den) — tüm statik testler geçti; dalga: gap 100 kargo güvertesi kuru (+2.4 mm) ama 0.5 s yan dalgada yalpa rezonansı devrilme payı −1.2° (H 40 mm); gap 70 tüm dalga kontrollerini geçiyor. `wave_motions(x_points=…)` eklendi (+test) (commit 12d156f)
   - Dürüstlük notu: eski brief tablosu sadece T=0.8 s'ye bakıp "✅ su yok" diyordu; ince ızgara gerçek zayıf noktayı gösterdi.
 
 ## Başarısız
