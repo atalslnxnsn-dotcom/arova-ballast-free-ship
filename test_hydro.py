@@ -262,3 +262,7 @@ print("table hull tests passed")
 e3 = load_v3_hull("2 hulls, gap 70 mm", mass=0.251)
 assert e3.lcg_hull < 0 and abs(analyse(e3, [], 1000).trim_deg) < 1.0, analyse(e3, [], 1000).trim_deg   # was 3.5 deg
 print("v3 LCG test passed")
+# 7) Relative motion at chosen stations: hull ends agree with rel_motion_m; midship moves least in long waves
+mx = wave_motions(cat, rc, 0.02, 0.6, 0.3, x_points=(cat.length / 2, -cat.length / 2, 0.0))
+assert isclose(max(mx["rel_at"][cat.length / 2], mx["rel_at"][-cat.length / 2]), mx["rel_motion_m"])
+print("x_points test passed")

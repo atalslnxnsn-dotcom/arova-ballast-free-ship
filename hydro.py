@@ -451,7 +451,7 @@ def _avg_slope_factor(u):
 
 
 def wave_motions(hull: Hull, res, wave_height_m, wave_period_s, water_depth_m=None,
-                 damping=0.1, added_mass=0.5):
+                 damping=0.1, added_mass=0.5, x_points=()):
     """Linear heave/pitch/roll amplitudes in regular waves (head waves for heave/pitch, beam waves for roll).
 
     Quasi-static excitation averaged over the hull (long-wave limit: heave -> a, pitch/roll -> wave slope k*a),
@@ -487,12 +487,11 @@ def wave_motions(hull: Hull, res, wave_height_m, wave_period_s, water_depth_m=No
                heave_qs_m=abs(heave_qs), pitch_qs_deg=abs(pitch_qs), roll_qs_deg=abs(roll_qs))
     # Relative motion: wave eta = a sin(wt - kx); hull z = heave sin(wt) - x*theta cos(wt) (head waves, x + bow).
     th = radians(pitch_s) if pitch_s == pitch_s else 0.0
-    rel = 0.0
-    for x in (hull.length / 2, -hull.length / 2):
-        for j in range(72):
-            ph = 2 * pi * j / 72
-            rel = max(rel, abs(a * sin(ph - k * x) - (heave_s * sin(ph) - x * th * cos(ph))))
-    out["rel_motion_m"] = rel
+    def rel_at(x):
+        return max(abs(a * sin(2 * pi * j / 72 - k * x) - (heave_s * sin(2 * pi * j / 72) - x * th * cos(2 * pi * j / 72)))
+                   for j in range(72))
+    out["rel_motion_m"] = max(rel_at(hull.length / 2), rel_at(-hull.length / 2))
+    out["rel_at"] = {x: rel_at(x) for x in x_points}     # e.g. the deck ends, to check where cargo sits
     return out
 
 
