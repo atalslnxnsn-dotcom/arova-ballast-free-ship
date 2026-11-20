@@ -3,6 +3,8 @@
 One app for a ballast-free model vessel: cargo layout & stability, load-limit prediction, baseline vs revised hull,
 density-aware route planner with real passage limits, roll/pitch/heave dashboard, and validation against tank tests.
 
+**Live demo:** https://atalslnxnsn-dotcom-arova-ballast-free-ship-app-qgbvdu.streamlit.app/
+
 ## Run
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
