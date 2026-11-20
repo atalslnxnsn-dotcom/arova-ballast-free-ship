@@ -37,11 +37,13 @@ with st.sidebar:
         with st.expander(name, expanded=key == "rev"):
             n = st.radio("Type", list(TYPES), index=n - 1, key=key + "n", format_func=TYPES.get)
             if n == 3:
-                cfg = st.selectbox("Printed configuration", v3_configs(), index=2 if key == "rev" else 0,
-                                   key=key + "cfg", help="Same two demihulls; the deck sets the gap. "
-                                   "One hull alone is the monohull baseline.")
-                mass = st.number_input("Assembled model mass (g) - weigh it", 10, 2000,
-                                       251 if cfg.startswith("2") else 90, key=key + "m3")
+                cfgs = v3_configs()
+                cfg = st.selectbox("Printed configuration", cfgs, index=len(cfgs) - 1 if key == "rev" else 0,
+                                   key=key + "cfg", help="Same two demihulls; the deck sets the gap. Gap 100 mm is "
+                                   "the competition set-up; one hull alone is the monohull baseline.")
+                # print estimates (3 walls, 5 % infill): 121 g per demihull + 62/72/82 g deck - weigh the real parts
+                est = {"40": 304, "70": 314, "100": 324}.get(cfg.split("gap ")[-1].split()[0], 121)
+                mass = st.number_input("Assembled model mass (g) - weigh it", 10, 2000, est, key=key + "m3" + cfg)
             else:
                 L = st.number_input("Pontoon length (mm)", 50, 250, L, key=key + "L")
                 B = st.number_input("Pontoon beam (mm)", 10, 250, B, key=key + "B")

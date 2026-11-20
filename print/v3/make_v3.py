@@ -4,7 +4,7 @@ Run: python3 print/v3/make_v3.py
 Writes demihull + three deck STLs next to this file and prints a check / hydrostatic report.
 
 Design idea (see DESIGN_BRIEF.md):
-- Two identical slender demihulls (235 x 50 x 55 mm), fine pointed bow, rounded bilges, keel rocker at the bow.
+- Two identical slender demihulls (235 x 50 x 70 mm), fine pointed bow, rounded bilges, keel rocker at the bow.
   Sides are vertical through the whole waterline band, so the app's wall-sided model stays close to exact.
 - One flat deck that clips over both hulls with saddle flanges. Three decks = hull gaps of 40 / 70 / 100 mm,
   so the same hulls test narrow vs wide catamaran, and one hull alone is the monohull baseline.
@@ -17,17 +17,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from make_stl import check, extrude, write_stl, pla_mass_g  # reuse the team's tested STL helpers
 
-L, B, D = 235.0, 50.0, 55.0          # mm demihull length, beam, depth (deck at z = D)
+L, B, D = 235.0, 50.0, 70.0          # mm demihull length, beam, depth (deck at z = D); 70 keeps >35 mm freeboard at 400 g for wave tests
 BILGE_R = 6.0                         # mm bilge radius
 BOW_START, ROCKER_START = 150.0, 185.0  # mm from transom: where the bow taper / keel rise begin
 ROCKER_H = 16.0                       # mm keel rise at the bow tip
 STERN_B = 40.0                        # mm transom width
 TIP_B = 2.0                           # mm bow tip width (printable, not a knife edge)
-DECK_X0, DECK_X1, DECK_T = 25.0, 175.0, 3.0   # deck span along the hull and thickness
+DECK_X0, DECK_X1, DECK_T = 27.5, 177.5, 3.0   # deck span along the hull (centre on the LCB, ~102.5 mm) and thickness
 FLANGE_H, FLANGE_T, FIT = 12.0, 2.4, 0.3      # saddle flange depth, thickness, side clearance
 GAPS = (40.0, 70.0, 100.0)            # mm clear gap between hulls
 N_ST, N_ARC = 80, 6                   # stations along x, points per bilge arc
-PLA_RHO_HULL_SHELL = 1.0              # mm effective shell for mass estimate
+PLA_RHO_HULL_SHELL = 1.2              # mm shell for mass estimate (3 walls: watertight hulls)
+CFD_GAP = 100.0                       # mm, competition configuration exported as one assembly for the judges' CFD
+CRADLE = dict(inner=22.5, wall=2.0, base=2.0, height=12.0, length=60.0)  # MPU-6050 (21 mm) / Nano (18 mm) slide-in sled
 
 
 def half_beam(x):
@@ -87,6 +89,29 @@ def deck_section(gap):
     right = [(W, 0), (W, H), (i1, H), (i1, T), (i0, T), (i0, H), (i0 - FLANGE_T, H), (i0 - FLANGE_T, T)]
     left = [(-y, z) for y, z in reversed(right)]
     return [(-W, 0), (W, 0)] + right[1:] + left[:-1]
+
+
+def cradle_section():
+    """U-channel for the electronics, printed base down; boards slide in from the end and sit above the water."""
+    h, t, b = CRADLE["height"], CRADLE["wall"], CRADLE["base"]
+    w = CRADLE["inner"] / 2 + t
+    return [(-w, 0), (w, 0), (w, h), (w - t, h), (w - t, b), (-w + t, b), (-w + t, h), (-w, h)]
+
+
+def moved(tris, f):
+    """Apply a point map to every vertex; fix the winding if the map mirrors the part."""
+    return flip_if_inside_out([tuple(f(*p) for p in t) for t in tris])
+
+
+def assembly(gap):
+    """Two hulls + deck in sailing position, one STL (three closed shells) for the judges' CFD.
+    The deck is lifted 0.1 mm so no faces coincide; flanges keep their 0.3 mm side clearance."""
+    c = (gap + B) / 2
+    hull = flip_if_inside_out(loft())
+    deck = flip_if_inside_out(extrude(deck_section(gap), DECK_X1 - DECK_X0))
+    parts = [moved(hull, lambda x, y, z, s=s: (x, y + s * c, z)) for s in (1, -1)]
+    parts.append(moved(deck, lambda x, y, z: (x + DECK_X0, y, D + DECK_T + 0.1 - z)))
+    return parts
 
 
 # ---------- exact hydrostatics by section integration ----------
@@ -150,7 +175,7 @@ if __name__ == "__main__":
     write_stl(out / "arova_v3_demihull_x2.stl", hull, "Arova v3 demihull - PRINT TWO - flat deck side down")
     hull_g = pla_mass_g(vol, area, shell_mm=PLA_RHO_HULL_SHELL, infill=0.05)
     print(f"demihull: watertight={ok}, {bbox[0]:.0f} x {bbox[1]:.0f} x {bbox[2]:.0f} mm, "
-          f"solid {vol/1000:.0f} cm3, est. PLA ~{hull_g:.0f} g each (2 walls, 5% infill)")
+          f"solid {vol/1000:.0f} cm3, est. PLA ~{hull_g:.0f} g each (3 walls, 5% infill)")
     # self-check: integrated volume at full depth must match the mesh volume
     full = hydro(D - 1e-6, 0, n_hulls=1, dx=0.25)["V"]
     assert abs(full - vol) / vol < 0.01, (full, vol)
@@ -174,10 +199,26 @@ if __name__ == "__main__":
             gm = h["KB"] + h["It"] / h["V"] - kg
             print(f"  {load:6d} | {T:8.1f} | {D - T:12.1f} | {gm:8.0f}")
 
+    cr = flip_if_inside_out(extrude(cradle_section(), CRADLE["length"]))
+    ok, cvol, _, cbox = check(cr)
+    assert ok
+    write_stl(out / "arova_v3_electronics_cradle.stl", cr, "Arova v3 electronics cradle - base down")
+    print(f"\nelectronics cradle: {cbox[0]:.0f} x {cbox[1]:.1f} x {cbox[2]:.0f} mm, ~{cvol*1.24e-3*0.8:.0f} g")
+
+    parts = assembly(CFD_GAP)
+    for p in parts:
+        assert check(p)[0], "assembly shell not watertight"
+    pts = [q for p in parts for t in p for q in t]
+    abox = [max(q[k] for q in pts) - min(q[k] for q in pts) for k in range(3)]
+    assert max(abox) <= 250, abox
+    write_stl(out / f"arova_v3_assembly_gap{int(CFD_GAP)}_CFD.stl", [t for p in parts for t in p],
+              f"Arova v3 assembly gap {CFD_GAP:.0f} mm - sailing position, for CFD")
+    print(f"CFD assembly (gap {CFD_GAP:.0f}): {abox[0]:.0f} x {abox[1]:.0f} x {abox[2]:.1f} mm, 3 watertight shells")
+
     T1 = draft_for(2 * hull_g / 2 + 50, 0, n_hulls=1)
     h1 = hydro(T1, 0, n_hulls=1)
     print(f"\nmonohull test (one demihull + 50 g): draft {T1:.1f} mm, GM ~{h1['KB'] + h1['It']/h1['V'] - 0.5*D:.1f} mm "
           f"(expect small or negative -> shows why the catamaran wins)")
     hT = hydro(25.0, 70)
     print(f"app equivalent at 25 mm draft: pontoon length L_eq = {hT['Awp']/(2*B):.0f} mm "
-          f"(enter B=50, D=55, gap as printed)")
+          f"(enter B={B:.0f}, D={D:.0f}, gap as printed)")
