@@ -40,6 +40,7 @@ class Hull:
     mass: float = 0.25     # kg, empty printed model incl. electronics
     kg_hull: float = 0.0   # m, empty-ship VCG above keel; 0 -> depth*0.45 (replace with inclining result)
     k_roll: float = 0.0    # m, roll radius of gyration; 0 -> 0.40*overall beam (replace with roll-decay result)
+    lcg_hull: float = 0.0  # m, empty-ship LCG from midship (+ bow); 0 for symmetric box hulls
     # Optional exact hydrostatics for a non-box hull (e.g. the printed v3): rows of
     # (T, V, KB, LCB from midship, Awp, I_T, I_L about LCF), SI units, increasing T. None -> wall-sided box model.
     table: tuple = None
@@ -156,7 +157,7 @@ def check_layout(hull: Hull, cargo: list) -> list:
 
 def analyse(hull: Hull, cargo: list, rho: float,
             min_freeboard_m=0.010, max_heel_deg=5.0, min_gm_m=0.005) -> Result:
-    items = [(hull.mass, 0.0, 0.0, hull.vcg)] + [
+    items = [(hull.mass, hull.lcg_hull, 0.0, hull.vcg)] + [
         (c.mass, c.x, c.y, hull.deck_top + c.lz / 2) for c in cargo]
     M = sum(m for m, *_ in items)
     xcg = sum(m * x for m, x, _, _ in items) / M
@@ -622,6 +623,8 @@ def load_v3_hull(config: str, mass: float, kg_hull: float = 0.0, k_roll: float =
     overall = n * g["demihull_beam_m"] + (n - 1) * gap
     return Hull(f"v3 {config}", g["length_m"], g["demihull_beam_m"], g["depth_m"], n, gap, mass, kg_hull, k_roll,
                 table=tuple(tuple(r) for r in cfg["rows"]),
+                # empty-ship LCG ~ centroid of the solid hull = LCB at full depth (fine bow puts both aft)
+                lcg_hull=cfg["rows"][-1][3],
                 deck_h=g["deck_top_m"] if n == 2 else g["depth_m"],
                 deck_len=g["deck_length_m"] if n == 2 else 0.0,
                 deck_beam=overall + 2 * g["flange_m"] if n == 2 else 0.0,

@@ -258,3 +258,7 @@ r1 = analyse(load_v3_hull("1 hull (monohull test)", mass=0.09), [Cargo("w", 0.05
 assert r1.gm < r3.gm
 
 print("table hull tests passed")
+# 6) Hull mass sits at the hull's own LCG (not midship): the empty v3 floats almost level
+e3 = load_v3_hull("2 hulls, gap 70 mm", mass=0.251)
+assert e3.lcg_hull < 0 and abs(analyse(e3, [], 1000).trim_deg) < 1.0, analyse(e3, [], 1000).trim_deg   # was 3.5 deg
+print("v3 LCG test passed")
