@@ -1,3 +1,40 @@
+# SABAH ÖZETİ (fikir gecesi bitti: 12 tur, 12 fikir uygulandı, 0 başarısız)
+
+**Sonuç:** v3 baskıya hazır. Tüm dosyalar bağımsız olarak doğrulandı (`python3 print/v3/verify_v3.py` → ALL CHECKS PASSED):
+- su geçirmez
+- 250 mm sınırının içinde
+- baskı yönünde 0 sarkma
+- hidrostatik tablonun tüm sütunları mesh ile %0.35 içinde
+
+Testler ve uygulama denemesi geçti. ~17 fikir üretildi, 12'si yapıldı.
+
+## Sabah ilk bakılacak 3 şey
+1. **Bu dal henüz `main`'e ve GitHub'a girmedi.** `main`'deki, GitHub'daki ve diğer oturumun hazırladığı `reports/Arova_v3_gemi_paketi.zip` içindeki v3 dosyaları ESKİ:
+   - gövde ters yönde (burun sarkar)
+   - güverte 3 mm
+   - pah yok
+   - CFD dosyası riskli
+
+   Organizatöre **bu daldaki** `print/v3` dosyalarını verin. Birleştirmek için: `git checkout main && git merge fikir-gecesi/2026-11-20 && git push`
+2. **Organizatöre `print/v3/PRINT_SHEET.md`'yi verin.**
+   - 2 gövde + gap 100 güverte + kızak, mümkünse ayrı yazıcılarda aynı anda: toplam ~2.3–5.6 sa (tek yazıcıda 6.6–16 sa).
+   - CFD için `arova_v3_CFD_hulls_gap100.stl` gönderin.
+   - Check-in'de dalga yüksekliğini, periyodunu ve tank derinliğini sorun. Çok kısa dik yan dalga (T≈0.5 s, H≥35 mm) varsa gap 70 güvertesini takın.
+3. **Baskıdan sonra:**
+   - parçaları tartıp kütleyi uygulamaya girin
+   - meyil deneyiyle gerçek KG'yi ölçün. Şu an KG STL'den tahmin, 45 mm.
+
+## Bilinmesi gerekenler
+- Codex kotası 22 Kasım 23:28'e kadar dolu. Bu gece ikinci görüş yerine bağımsız yöntemle (STL'nin kendisinden) çift kontrol yapıldı.
+- Dürüstlük:
+  - Eski tasarım notundaki dalga tablosu yalnız T=0.8 s'ye bakıyordu. İnce ızgara gerçek sınırı gösterdi: H ≤ 30 mm her periyotta güvenli.
+  - Benim bir iddiam ("GM 14 mm fazla") testte düzeltildi: 400 g'da fark 6.5 mm.
+- Karar sizin: eski `arova_v3_assembly_gap100_CFD.stl` adı yanıltıcı (sadece görsel). Silinmedi, çünkü gece kuralı var olan dosyayı silmeyi yasaklıyor.
+
+**Geri almak için:** `git checkout main && git branch -D fikir-gecesi/2026-11-20`
+
+---
+
 # Fikir Gecesi — 2026-11-20  (dal: fikir-gecesi/2026-11-20)
 
 Hedef: Arova v3 ballast-free katamaranı yarın (Cmt 14:00 teslim) 3D baskıya hazır, çift kontrollü, kazanacak hale getirmek.
