@@ -10,6 +10,8 @@
 | 3 | `arova_v3_electronics_cradle.stl` (optional, the electronics now sit in the hull pockets) | 1 | 60 × 27 × 12 | as saved: base down | 7 g | 0.3 h |
 | 4 | `arova_v3_deck_gap70.stl` | 1 | 150 × 195 × 14 | as saved | 94 g | 4.2 h / 1.8 h |
 
+Optional spare, not needed: `arova_v3_ebox_base.stl` + `arova_v3_ebox_lid.stl` (79 × 64 mm lidded electronics box, 46 g). The electronics go in the hull pockets.
+
 Print #4 (the gap 70 deck) **only if there is printer time left**. It is the backup deck for very short, steep beam waves.
 
 \* Watertight profile (4 walls). Times are for a typical printer / a fast CoreXY printer. They are estimates from the STL surface area and volume (`print_estimate.py`). **The slicer's number wins.**
