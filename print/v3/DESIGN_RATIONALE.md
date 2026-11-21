@@ -83,7 +83,14 @@ Every claim below is backed by one of two things: a number our own scripts produ
 - **Checked (`verify_v3.py`, `challenge_check.py`):**
   - Files: hulls still watertight with zero overhang. The pocket ceiling prints as a 40 mm bridge.
   - Hydrostatics: match the mesh within 0.35 % below the pocket floor.
-  - With 40 g of electronics in the pockets: all load tests pass (400 g: draught 37.6 mm, GM 135 mm, load limit 803 g). The worst-wave deck splash margin improves from −6.2 to −2.8 mm compared with mounting on the deck.
+  - With 40 g of electronics in the pockets: all load tests pass (400 g: draught 37.6 mm, GM 135 mm, load limit 803 g).
+- **Same ship, pocket vs deck cradle:**
+  - KG 45.4 vs 47.8 mm
+  - GM 135.5 vs 134.2 mm
+  - load limit 803 vs 800 g
+  - worst-wave deck splash margin −2.5 vs +0.1 mm
+
+  Stability is practically the same. The real gains of the pocket are splash protection, a fixed sensor mount and a clean look; the cost is lifting the deck for access. (An earlier note compared different hull versions and overstated a wave gain; corrected.)
 - **Rejected alternatives:**
   - Inside the 2 mm deck: no room.
   - A thick deck box: 60–80 g at the highest point.
