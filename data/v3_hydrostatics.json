@@ -1284,7 +1284,7 @@
     ]
    ],
    "estimate": {
-    "mass_kg": 0.14,
+    "mass_kg": 0.1693,
     "kg_m": 0.03595,
     "source": "print_estimate.py, watertight profile"
    }
@@ -2555,8 +2555,8 @@
     ]
    ],
    "estimate": {
-    "mass_kg": 0.3629,
-    "kg_m": 0.04355,
+    "mass_kg": 0.4215,
+    "kg_m": 0.0425,
     "source": "print_estimate.py, watertight profile"
    }
   },
@@ -3826,8 +3826,8 @@
     ]
    ],
    "estimate": {
-    "mass_kg": 0.374,
-    "kg_m": 0.04437,
+    "mass_kg": 0.4326,
+    "kg_m": 0.04323,
     "source": "print_estimate.py, watertight profile"
    }
   },
@@ -5097,8 +5097,8 @@
     ]
    ],
    "estimate": {
-    "mass_kg": 0.3852,
-    "kg_m": 0.04514,
+    "mass_kg": 0.4438,
+    "kg_m": 0.04393,
     "source": "print_estimate.py, watertight profile"
    }
   }

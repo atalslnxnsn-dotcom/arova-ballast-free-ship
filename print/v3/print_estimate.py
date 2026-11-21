@@ -18,7 +18,8 @@ from verify_v3 import load, shells, volume, cross, sub  # noqa: E402
 PLA = 1.24e-3            # g/mm3
 LINE = 0.42              # mm extrusion width
 PROFILES = {
-    "watertight (3 walls, 5% gyroid)": dict(walls=3, infill=0.05),
+    "watertight (4 walls, 5% gyroid)": dict(walls=4, infill=0.05),   # Prusa: >= 3-4 perimeters for watertight
+    "minimum (3 walls, 5% gyroid)": dict(walls=3, infill=0.05),
     "fast (2 walls, lightning ~2%)": dict(walls=2, infill=0.02),
 }
 FLOWS = {"typical printer": 5.0, "fast CoreXY": 12.0}     # mm3/s average
@@ -53,7 +54,7 @@ def volume_centroid_z(tris):
     return m / v
 
 
-def mass_kg_estimate(cfg="2 hulls, gap 100 mm", electronics=False, profile="watertight (3 walls, 5% gyroid)"):
+def mass_kg_estimate(cfg="2 hulls, gap 100 mm", electronics=False, profile="watertight (4 walls, 5% gyroid)"):
     """(mass kg, KG m above keel) of the assembled ship, from the STL files.
 
     Hull CG = surface-area centroid (a 3-wall shell carries its mass at the skin), deck CG = volume centroid.

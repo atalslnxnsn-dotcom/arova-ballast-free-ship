@@ -30,11 +30,11 @@ Every claim below is backed by one of two things: a number our own scripts produ
 - **Light ship = less power.** At a given speed, power scales with displacement^(2/3) (Admiralty coefficient,
   [Wärtsilä](https://wartsila.com/encyclopedia/term/admiralty-coefficient-admiralty-constant)). We cut the deck from
   3 to 2 mm after a strength check: 25 g lighter, still a 10× bending margin (`make_v3.py` comment, FIKIRLER.md).
-  The whole ship is about 392 g of PLA (`print_estimate.py`), and the parts are reusable and swappable.
+  The whole ship is about 450 g of PLA with 4 watertight walls (`print_estimate.py`), and the parts are reusable and swappable.
 
 ## 3. Safe in waves, and we know where the limit is
 - **Evidence (`wave_map.py`):** over wave heights of 5–40 mm and periods of 0.4–1.6 s, at 250 g and 400 g, both decks
-  keep the cargo deck dry and roll far below the windward-hull lift-off angle up to **H = 30 mm at every period** (35 mm with 400 g on board).
+  keep the cargo deck dry and roll far below the windward-hull lift-off angle up to **H = 30 mm at every period** (35 mm with roll damping 0.20). Our research suggests catamaran damping of about 0.15–0.25; the roll-decay test will measure it.
 - **Honest limit:** very short, steep beam waves (T ≈ 0.4–0.5 s, H ≥ 35 mm) hit the catamaran's roll period. The
   risk disappears with a roll damping of 0.20 instead of 0.10. Answer: the **gap 70 backup deck**, swapped in a minute.
 - The hulls are sealed solids. Water over the bow tips is shed and cannot flood the ship.
@@ -69,7 +69,7 @@ Every claim below is backed by one of two things: a number our own scripts produ
 - A research note suggested a smaller keel rocker to regain waterline length and cut resistance.
 - **Measured on our geometry:** the rocker tip rises only 16 mm, and the draught is 23–33 mm. The whole keel is already underwater, so the waterline length stays 235 mm either way.
 - The change also made the ship slightly worse:
-  - load limit 918 → 895 g
+  - load limit 918 → 895 g (3-wall print mass)
   - lowest freeboard at 400 g 36.6 → 35.9 mm
   - safe wave height at 400 g (damping 0.10) 35 → 30 mm
 - Decision: kept 16 mm (`challenge_check.py`, `wave_map.py`).
