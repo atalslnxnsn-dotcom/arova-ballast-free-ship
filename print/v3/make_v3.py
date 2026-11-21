@@ -31,6 +31,10 @@ N_ST, N_ARC = 80, 6                   # stations along x, points per bilge arc
 PLA_RHO_HULL_SHELL = 1.2              # mm shell for mass estimate (3 walls: watertight hulls)
 CFD_GAP = 100.0                       # mm, competition configuration exported as one assembly for the judges' CFD
 CRADLE = dict(inner=22.5, wall=2.0, base=2.0, height=12.0, length=60.0)  # MPU-6050 (21 mm) / Nano (18 mm) slide-in sled
+# Embedded electronics: an open pocket in the top face of each demihull, closed from above by the deck.
+# It is a dent in the outer surface - the hull's sealed air volume stays closed. Centred under the deck/LCB.
+# 64 x 40 x 22 mm fits a 2xAA holder (60 x 35 x 20) in one hull and Nano + MPU6050 (+ mini breadboard) in the other.
+POCKET = dict(x0=70.5, x1=134.5, w=40.0, d=22.0)
 
 
 def half_beam(x):
@@ -47,7 +51,7 @@ def keel(x):
 
 
 def section(x):
-    """Closed convex (y, z) section, counter-clockwise seen from +x."""
+    """Closed (y, z) section, counter-clockwise seen from +x (convex except the top pocket notch)."""
     b, zk = half_beam(x), keel(x)
     r = min(BILGE_R, b * 0.8, (D - zk) * 0.3)
     pts = []
@@ -55,7 +59,11 @@ def section(x):
         a = -math.pi / 2 + (math.pi / 2) * i / (N_ARC - 1)
         pts.append((b - r + r * math.cos(a), zk + r + r * math.sin(a)))
     c = min(TOP_CHAMFER, b * 0.4)                # 45 deg chamfer on the top edges = the edges on the print bed:
-    pts += [(b, D - c), (b - c, D), (-b + c, D), (-b, D - c)]   # absorbs elephant foot where the deck flanges grip
+    # top edge with the electronics pocket: same vertex count at every station (zero depth outside the pocket)
+    inside = POCKET["x0"] <= x <= POCKET["x1"]
+    w = POCKET["w"] / 2 if inside else max(min(POCKET["w"] / 2, b - c - 2), (b - c) * 0.3)
+    d = POCKET["d"] if inside else 0.0
+    pts += [(b, D - c), (b - c, D), (w, D), (w, D - d), (-w, D - d), (-w, D), (-b + c, D), (-b, D - c)]
     for i in range(N_ARC):                       # port bilge: side -> bottom
         a = math.pi + (math.pi / 2) * i / (N_ARC - 1)
         pts.append((-b + r + r * math.cos(a), zk + r + r * math.sin(a)))
@@ -63,7 +71,9 @@ def section(x):
 
 
 def loft():
-    xs = [L * (i / (N_ST - 1)) ** 1.0 for i in range(N_ST)]
+    eps = 0.05                                   # extra stations: vertical pocket end walls
+    xs = sorted(set([L * (i / (N_ST - 1)) for i in range(N_ST)]
+                    + [POCKET["x0"] - eps, POCKET["x0"], POCKET["x1"], POCKET["x1"] + eps]))
     secs = [[(x, y, z) for y, z in section(x)] for x in xs]
     n = len(secs[0])
     tris = []
@@ -71,9 +81,11 @@ def loft():
         for i in range(n):
             j = (i + 1) % n
             tris += [(s0[i], s1[j], s0[j]), (s0[i], s1[i], s1[j])]
-    for k in range(1, n - 1):                    # convex caps: fans
+    for k in range(1, n - 1):                    # end caps (no pocket there, so convex): fans
         tris.append((secs[0][0], secs[0][k], secs[0][k + 1]))
         tris.append((secs[-1][0], secs[-1][k + 1], secs[-1][k]))
+    # drop zero-area triangles from the zero-depth pocket points (repeated vertices); the mesh stays watertight
+    tris = [t for t in tris if len({tuple(round(c, 9) for c in p) for p in t}) == 3]
     return tris
 
 

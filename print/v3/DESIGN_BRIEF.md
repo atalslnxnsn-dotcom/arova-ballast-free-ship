@@ -23,7 +23,8 @@ Paste this into the CAD tool (SolidCraft). Units are mm. Reference STLs made fro
   - Bow from x = 150 to 235: fine entry, half-beam = 25·(1 − t^1.8) with t = (x−150)/85. It meets the parallel body tangentially and ends in a 2 mm wide tip (not a knife edge).
 - **Sections:** sides are **vertical** from the bilge up to the top. The two top edges (the edges on the print bed) carry a **0.8 mm × 45° chamfer** that absorbs elephant foot where the deck flanges grip. Bottom is flat, with a **6 mm bilge radius** on both lower edges. The radius shrinks where the hull narrows at the bow.
 - **Keel rocker:** the keel is flat to x = 185, then rises as 16·((x−185)/50)² mm, reaching 16 mm at the bow tip (wave-piercing bow).
-- Closed solid, no holes, no sockets. Nothing can leak, and water on deck cannot flood it.
+- Closed solid, no holes into the hull. Nothing can leak, and water on deck cannot flood it.
+- **Embedded electronics pocket** in the top face, under the deck: 64 × 40 × 22 mm, x = 70.5–134.5 (centred on the deck/LCB), 10 mm walls each side. It is a dent in the outer surface; the sealed air volume stays closed. Its floor is at 48 mm, about 12 mm above the 400 g waterline. One hull holds the 2×AA pack, the other the Nano + MPU6050, so the mass stays symmetric and about 25 mm lower than on top of the deck. The deck covers both pockets. Drill one 5–6 mm cable hole in the deck plate above each pocket to run the wires across.
 - Print **upside down** (flat top on the bed): no supports. **The STL is already saved in this orientation** - do not rotate it in the slicer (keel-down printing leaves the bow rocker as a 22 cm² unsupported overhang). **3 walls** (1.2 mm) for watertightness, 4 top/bottom layers, 3–5 % gyroid or lightning infill.
 
 ### 2. Clip-on deck (gap 100 = competition; 40 and 70 = optional comparison decks)
@@ -51,59 +52,59 @@ Fresh water 15 °C; masses and centres of gravity measured from the STL files (w
 
 | Check | Result | Pass |
 |---|---|---|
-| Ship as printed | mass 444 g, KG 43.9 mm (from the STL files) | ✅ |
-| Floats with 150 g (centred) | draft 25.1 mm, lowest freeboard 44.2 mm, GM 230 mm, trim +0.3° | ✅ |
-| Floats with 250 g (centred) | draft 29.3 mm, lowest freeboard 40.4 mm, GM 188 mm, trim +0.1° | ✅ |
-| Floats with 400 g (centred) | draft 35.5 mm, lowest freeboard 34.1 mm, GM 145 mm, trim -0.2° | ✅ |
-| 400 g, 20 mm off-centre | heel 3.7°, lowest freeboard 26.9 mm | ✅ |
-| Predicted load limit (centred) | 876 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
-| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 41.7 mm relative motion at the deck ends vs 34.3 mm deck height (margin -7.4 mm) | ❌ |
-| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.5 s: roll 32.2° vs windward-hull lift-off 35.3° (margin +3.1°) | ❌ |
-| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 57.6 mm vs 34.1 mm at the tips (margin -23.5 mm) - closed hulls shed it | ✅ |
+| Ship as printed | mass 455 g, KG 44.3 mm (from the STL files) | ✅ |
+| Floats with 150 g (centred) | draft 25.6 mm, lowest freeboard 43.7 mm, GM 225 mm, trim +0.4° | ✅ |
+| Floats with 250 g (centred) | draft 29.7 mm, lowest freeboard 39.9 mm, GM 185 mm, trim +0.2° | ✅ |
+| Floats with 400 g (centred) | draft 35.9 mm, lowest freeboard 33.8 mm, GM 143 mm, trim -0.2° | ✅ |
+| 400 g, 20 mm off-centre | heel 3.7°, lowest freeboard 26.6 mm | ✅ |
+| Predicted load limit (centred) | 836 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
+| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 40.7 mm relative motion at the deck ends vs 33.9 mm deck height (margin -6.9 mm) | ❌ |
+| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.5 s: roll 32.9° vs windward-hull lift-off 35.7° (margin +2.7°) | ❌ |
+| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 56.4 mm vs 33.8 mm at the tips (margin -22.6 mm) - closed hulls shed it | ✅ |
 
-**2 hulls, gap 100 mm + 40 g electronics**
+**2 hulls, gap 100 mm + 40 g electronics (in the hull pockets)**
 
 | Check | Result | Pass |
 |---|---|---|
-| Ship as printed | mass 484 g, KG 47.5 mm (from the STL files) | ✅ |
-| Floats with 150 g (centred) | draft 26.8 mm, lowest freeboard 42.6 mm, GM 212 mm, trim +0.3° | ✅ |
-| Floats with 250 g (centred) | draft 30.9 mm, lowest freeboard 38.8 mm, GM 175 mm, trim +0.1° | ✅ |
-| Floats with 400 g (centred) | draft 37.1 mm, lowest freeboard 32.4 mm, GM 136 mm, trim -0.2° | ✅ |
-| 400 g, 20 mm off-centre | heel 3.8°, lowest freeboard 25.1 mm | ✅ |
-| Predicted load limit (centred) | 841 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
-| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 34.4 mm relative motion at the deck ends vs 32.6 mm deck height (margin -1.8 mm) | ❌ |
-| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.5 s: roll 34.9° vs windward-hull lift-off 36.6° (margin +1.7°) | ❌ |
-| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 48.1 mm vs 32.4 mm at the tips (margin -15.7 mm) - closed hulls shed it | ✅ |
+| Ship as printed | mass 495 g, KG 45.4 mm (from the STL files) | ✅ |
+| Floats with 150 g (centred) | draft 27.2 mm, lowest freeboard 42.0 mm, GM 209 mm, trim +0.4° | ✅ |
+| Floats with 250 g (centred) | draft 31.4 mm, lowest freeboard 38.3 mm, GM 173 mm, trim +0.2° | ✅ |
+| Floats with 400 g (centred) | draft 37.6 mm, lowest freeboard 32.1 mm, GM 135 mm, trim -0.2° | ✅ |
+| 400 g, 20 mm off-centre | heel 3.8°, lowest freeboard 24.8 mm | ✅ |
+| Predicted load limit (centred) | 803 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
+| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 35.0 mm relative motion at the deck ends vs 32.2 mm deck height (margin -2.8 mm) | ❌ |
+| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.5 s: roll 34.9° vs windward-hull lift-off 36.9° (margin +2.0°) | ❌ |
+| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 48.8 mm vs 32.1 mm at the tips (margin -16.7 mm) - closed hulls shed it | ✅ |
 
 **2 hulls, gap 70 mm**
 
 | Check | Result | Pass |
 |---|---|---|
-| Ship as printed | mass 433 g, KG 43.2 mm (from the STL files) | ✅ |
-| Floats with 150 g (centred) | draft 24.7 mm, lowest freeboard 44.7 mm, GM 145 mm, trim +0.3° | ✅ |
-| Floats with 250 g (centred) | draft 28.8 mm, lowest freeboard 40.9 mm, GM 115 mm, trim +0.1° | ✅ |
-| Floats with 400 g (centred) | draft 35.0 mm, lowest freeboard 34.6 mm, GM 84 mm, trim -0.2° | ✅ |
-| 400 g, 20 mm off-centre | heel 6.5°, lowest freeboard 23.7 mm | ✅ |
-| Predicted load limit (centred) | 886 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
-| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 42.2 mm relative motion at the deck ends vs 34.7 mm deck height (margin -7.4 mm) | ❌ |
-| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.5 s: roll 35.1° vs windward-hull lift-off 45.0° (margin +9.9°) | ✅ |
-| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 58.2 mm vs 34.6 mm at the tips (margin -23.6 mm) - closed hulls shed it | ✅ |
+| Ship as printed | mass 444 g, KG 43.7 mm (from the STL files) | ✅ |
+| Floats with 150 g (centred) | draft 25.1 mm, lowest freeboard 44.1 mm, GM 141 mm, trim +0.4° | ✅ |
+| Floats with 250 g (centred) | draft 29.3 mm, lowest freeboard 40.3 mm, GM 112 mm, trim +0.2° | ✅ |
+| Floats with 400 g (centred) | draft 35.5 mm, lowest freeboard 34.2 mm, GM 83 mm, trim -0.2° | ✅ |
+| 400 g, 20 mm off-centre | heel 6.5°, lowest freeboard 23.3 mm | ✅ |
+| Predicted load limit (centred) | 846 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
+| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 41.8 mm relative motion at the deck ends vs 34.3 mm deck height (margin -7.4 mm) | ❌ |
+| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.5 s: roll 33.3° vs windward-hull lift-off 45.4° (margin +12.0°) | ✅ |
+| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 57.7 mm vs 34.2 mm at the tips (margin -23.5 mm) - closed hulls shed it | ✅ |
 
 **2 hulls, gap 40 mm**
 
 | Check | Result | Pass |
 |---|---|---|
-| Ship as printed | mass 421 g, KG 42.5 mm (from the STL files) | ✅ |
-| Floats with 150 g (centred) | draft 24.2 mm, lowest freeboard 45.1 mm, GM 75 mm, trim +0.3° | ✅ |
-| Floats with 250 g (centred) | draft 28.3 mm, lowest freeboard 41.3 mm, GM 55 mm, trim +0.2° | ✅ |
-| Floats with 400 g (centred) | draft 34.5 mm, lowest freeboard 35.1 mm, GM 35 mm, trim -0.2° | ✅ |
-| 400 g, 20 mm off-centre | heel 15.6°, lowest freeboard 12.8 mm | ✅ |
-| Predicted load limit (centred) | 895 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
-| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 42.1 mm relative motion at the deck ends vs 35.2 mm deck height (margin -6.9 mm) | ❌ |
-| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.6 s: roll 20.9° vs windward-hull lift-off 59.9° (margin +39.1°) | ✅ |
-| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 58.1 mm vs 35.1 mm at the tips (margin -23.0 mm) - closed hulls shed it | ✅ |
+| Ship as printed | mass 433 g, KG 42.9 mm (from the STL files) | ✅ |
+| Floats with 150 g (centred) | draft 24.7 mm, lowest freeboard 44.6 mm, GM 73 mm, trim +0.4° | ✅ |
+| Floats with 250 g (centred) | draft 28.8 mm, lowest freeboard 40.8 mm, GM 54 mm, trim +0.2° | ✅ |
+| Floats with 400 g (centred) | draft 35.0 mm, lowest freeboard 34.7 mm, GM 34 mm, trim -0.1° | ✅ |
+| 400 g, 20 mm off-centre | heel 15.7°, lowest freeboard 12.2 mm | ✅ |
+| Predicted load limit (centred) | 856 g; first limit: Lowest freeboard 10.0 mm below 10 mm limit (water on deck risk). | ✅ |
+| Waves H 10–40 mm, T 0.5–1.5 s, 400 g: cargo deck stays dry (worst case) | H 40 mm, T 0.6 s: 42.2 mm relative motion at the deck ends vs 34.8 mm deck height (margin -7.4 mm) | ❌ |
+| Waves, 400 g: no capsize in beam seas (worst case) | H 40 mm, T 0.8 s: roll 19.5° vs windward-hull lift-off 60.3° (margin +40.7°) | ✅ |
+| Waves, 400 g: water over the sealed bow/stern tips (info) | H 40 mm, T 0.6 s: 58.2 mm vs 34.7 mm at the tips (margin -23.5 mm) - closed hulls shed it | ✅ |
 
-**1 hull alone (monohull baseline)**: 169 g + 50 g on top → GM -21.7 mm (tips over) - the 'why a catamaran' demo.
+**1 hull alone (monohull baseline)**: 175 g + 50 g on top → GM -22.2 mm (tips over) - the 'why a catamaran' demo.
 
 ## Which deck for which waves (`python3 print/v3/wave_map.py`)
 Map over wave height 5–40 mm × period 0.4–1.6 s, 250 g and 400 g, roll damping 0.10 and 0.20, 300 mm tank depth:

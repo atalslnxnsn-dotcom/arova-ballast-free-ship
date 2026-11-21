@@ -65,15 +65,30 @@ def bbox(tris):
     return lo, hi
 
 
-def overhang_area(tris, bed_z):
-    """Area (mm^2) of faces pointing down by more than 45 deg from vertical, excluding faces lying on the bed."""
+def overhang_area(tris, bed_z, bridges=None):
+    """Area (mm^2) of faces pointing down by more than 45 deg from vertical, excluding faces lying on the bed.
+
+    Flat down-facing faces (|n_z| > 0.99) are bridges, not overhangs: printers span them between walls. If a list
+    is passed as `bridges`, their triangles go there instead (the caller checks the bridge span).
+    """
     area = 0.0
     for a, b, c in tris:
         n = cross(sub(b, a), sub(c, a))
         s = math.sqrt(sum(x * x for x in n)) or 1.0
         if n[2] / s < -OVERHANG_COS and max(a[2], b[2], c[2]) > bed_z + 0.2:
-            area += s / 2
+            if bridges is not None and n[2] / s < -0.99:
+                bridges.append((a, b, c))
+            else:
+                area += s / 2
     return area
+
+
+def bridge_span(tris):
+    """Largest short-side span of the bridged region(s): min of the x and y extent of the flat down faces (mm)."""
+    if not tris:
+        return 0.0
+    lo, hi = bbox(tris)
+    return min(hi[0] - lo[0], hi[1] - lo[1])
 
 
 def clip_below(tri, z0):
@@ -215,9 +230,14 @@ def main():
         n_sh = len(shells(t))
         ok_w = all(watertight(s) for s in shells(t))
         vol = sum(volume(s) for s in shells(t))
-        over = overhang_area(t, lo[2])
+        br = []
+        over = overhang_area(t, lo[2], br)
+        span = bridge_span(br)
         line = (f"{p.name}: {size[0]:.1f} x {size[1]:.1f} x {size[2]:.1f} mm, {n_sh} shell(s), "
-                f"watertight={ok_w}, volume {vol/1000:.1f} cm3, overhang >45deg not on bed: {over/100:.1f} cm2")
+                f"watertight={ok_w}, volume {vol/1000:.1f} cm3, overhang >45deg not on bed: {over/100:.1f} cm2"
+                + (f", bridge {span:.0f} mm span" if br else ""))
+        if not cfd and span > 45:
+            fails.append(f"{p.name}: {span:.0f} mm bridge - too long to print without support")
         report.append(line)
         if not ok_w:
             fails.append(f"{p.name}: not watertight")
@@ -233,7 +253,8 @@ def main():
     if hull_files:
         hull = load(hull_files[0])
         lo, hi = bbox(hull)
-        if overhang_area(hull, lo[2]) > overhang_area([tuple((x, y, hi[2] + lo[2] - z) for x, y, z in reversed(t)) for t in hull], lo[2]):
+        # orientation test ignores flat bridges (the pocket ceiling) - only real overhangs tell print from sailing
+        if overhang_area(hull, lo[2], []) > overhang_area([tuple((x, y, hi[2] + lo[2] - z) for x, y, z in reversed(t)) for t in hull], lo[2], []):
             sail = hull
         else:   # file is keel-up (print orientation): flip to sailing
             sail = [tuple((x, y, hi[2] + lo[2] - z) for x, y, z in reversed(t)) for t in hull]
@@ -250,7 +271,11 @@ def main():
         # Every other column the app uses (KB, LCB, waterplane area, I_T, I_L), at working draughts 15-55 mm
         L_mid = (hi[0] + lo[0]) / 2
         dev = {"KB mm": 0.0, "LCB mm": 0.0, "Awp %": 0.0, "I_T %": 0.0, "I_L %": 0.0}
-        for row in [r for r in tab if 0.015 <= r[0] <= 0.055][::8]:
+        # Waterplane columns are compared below the electronics-pocket floor: above it the table (correctly) uses the
+        # outer envelope as waterplane (water cannot enter the pocket), while a plain mesh section has a hole there.
+        import make_v3 as _v3
+        top_T = min(0.055, (_v3.D - _v3.POCKET["d"] - 1) / 1000) if hasattr(_v3, "POCKET") else 0.055
+        for row in [r for r in tab if 0.015 <= r[0] <= top_T][::8]:
             T, _, KB, LCB, Awp, IT, IL = row
             z0 = lo[2] + T * 1000
             _, cen = submerged_centroid(sail, z0)
@@ -260,7 +285,7 @@ def main():
             dev["Awp %"] = max(dev["Awp %"], abs(A / (Awp * 1e6) - 1) * 100)
             dev["I_T %"] = max(dev["I_T %"], abs(it / (IT * 1e12) - 1) * 100)
             dev["I_L %"] = max(dev["I_L %"], abs(il / (IL * 1e12) - 1) * 100)
-        report.append("hydrostatics: mesh vs table, worst over draughts 15-55 mm: "
+        report.append(f"hydrostatics: mesh vs table, worst over draughts 15-{top_T*1000:.0f} mm: "
                       + ", ".join(f"{k.split()[0]} {v:.2f} {k.split()[1]}" for k, v in dev.items()))
         limits = {"KB mm": 0.5, "LCB mm": 1.0, "Awp %": 2.0, "I_T %": 3.0, "I_L %": 3.0}
         for k, v in dev.items():

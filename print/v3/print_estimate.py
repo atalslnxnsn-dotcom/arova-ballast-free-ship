@@ -58,7 +58,7 @@ def mass_kg_estimate(cfg="2 hulls, gap 100 mm", electronics=False, profile="wate
     """(mass kg, KG m above keel) of the assembled ship, from the STL files.
 
     Hull CG = surface-area centroid (a 3-wall shell carries its mass at the skin), deck CG = volume centroid.
-    Electronics option: 40 g, 15 mm above the deck.
+    Electronics option: 40 g in the hull-top pockets, ~10 mm above the pocket floor.
     """
     import make_v3 as v3
     prof = PROFILES[profile]
@@ -69,8 +69,9 @@ def mass_kg_estimate(cfg="2 hulls, gap 100 mm", electronics=False, profile="wate
         gap = cfg.split("gap ")[1].split()[0]
         deck_t = load(HERE / f"arova_v3_deck_gap{gap}.stl")      # plate on the bed (z=0), flanges up
         parts.append((estimate(deck_t, **prof) * PLA / 1000, v3.D + v3.DECK_T - volume_centroid_z(deck_t)))
-    if electronics:
-        parts.append((0.040, (v3.D + v3.DECK_T if cfg.startswith("2") else v3.D) + 15))
+    if electronics:   # embedded in the hull-top pockets (split over both hulls), about 10 mm above the pocket floor
+        floor = v3.D - v3.POCKET["d"] if hasattr(v3, "POCKET") else v3.D + v3.DECK_T
+        parts.append((0.040, floor + 10))
     m = sum(p[0] for p in parts)
     return m, sum(p[0] * p[1] for p in parts) / m / 1000
 

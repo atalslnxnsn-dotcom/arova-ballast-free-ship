@@ -7,7 +7,7 @@ Inputs come from the files, not from guesses:
 - part masses from print_estimate.py (watertight profile) and their centres of gravity from the STL meshes
   (hull = surface-area centroid, since a 3-wall shell carries most of its mass at the skin; deck = volume centroid);
 - hydrostatics from data/v3_hydrostatics.json (exact sections, cross-checked against the mesh by verify_v3.py).
-Fresh water 15 C. Cargo = 30 mm tall box(es) on the deck centre. Electronics option adds 40 g at 85 mm.
+Fresh water 15 C. Cargo = 30 mm tall box(es) on the deck centre. Electronics option adds 40 g in the hull-top pockets.
 """
 import sys
 from pathlib import Path
@@ -80,7 +80,7 @@ def rows(cfg="2 hulls, gap 100 mm", electronics=False):
 
 
 def table(cfg, electronics=False):
-    lines = [f"**{cfg}{' + 40 g electronics' if electronics else ''}**", "",
+    lines = [f"**{cfg}{' + 40 g electronics (in the hull pockets)' if electronics else ''}**", "",
              "| Check | Result | Pass |", "|---|---|---|"]
     for name, res, ok in rows(cfg, electronics):
         lines.append(f"| {name} | {res} | {'✅' if ok else '❌'} |")

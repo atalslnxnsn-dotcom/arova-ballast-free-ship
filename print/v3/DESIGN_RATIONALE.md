@@ -73,3 +73,18 @@ Every claim below is backed by one of two things: a number our own scripts produ
   - lowest freeboard at 400 g 36.6 → 35.9 mm
   - safe wave height at 400 g (damping 0.10) 35 → 30 mm
 - Decision: kept 16 mm (`challenge_check.py`, `wave_map.py`).
+
+## 8. Electronics embedded in the hulls (team decision)
+- Each demihull has a 64 × 40 × 22 mm pocket in its top face, closed from above by the deck. The battery goes in one hull and the Nano + MPU6050 in the other.
+- **Why this way:**
+  - The pocket is a dent in the hull surface, not an opening into the sealed air volume, so it adds no leak path.
+  - Its floor is about 12 mm above the 400 g waterline.
+  - The electronics sit about 25 mm lower than on the deck.
+- **Checked (`verify_v3.py`, `challenge_check.py`):**
+  - Files: hulls still watertight with zero overhang. The pocket ceiling prints as a 40 mm bridge.
+  - Hydrostatics: match the mesh within 0.35 % below the pocket floor.
+  - With 40 g of electronics in the pockets: all load tests pass (400 g: draught 37.6 mm, GM 135 mm, load limit 803 g). The worst-wave deck splash margin improves from −6.2 to −2.8 mm compared with mounting on the deck.
+- **Rejected alternatives:**
+  - Inside the 2 mm deck: no room.
+  - A thick deck box: 60–80 g at the highest point.
+  - A hatch into the sealed hull: a leak path.

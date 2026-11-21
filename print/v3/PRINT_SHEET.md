@@ -5,16 +5,16 @@
 ## What to print (priority order)
 | # | File | Qty | Size (mm) | On the bed | Est. PLA each* | Est. time each* |
 |---|---|---|---|---|---|---|
-| 1 | `arova_v3_demihull_x2.stl` | **2** | 235 × 60 × 70 | **as saved**: flat top face down, keel up | 169 g | 7.6 h / 3.2 h |
+| 1 | `arova_v3_demihull_x2.stl` | **2** | 235 × 60 × 70 | **as saved**: flat top face down, keel up | 175 g | 7.8 h / 3.3 h |
 | 2 | `arova_v3_deck_gap100.stl` | 1 | 150 × 225 × 14 | as saved: plate down, flanges up | 105 g | 4.7 h / 2.0 h |
-| 3 | `arova_v3_electronics_cradle.stl` | 1 | 60 × 27 × 12 | as saved: base down | 7 g | 0.3 h |
+| 3 | `arova_v3_electronics_cradle.stl` (optional, the electronics now sit in the hull pockets) | 1 | 60 × 27 × 12 | as saved: base down | 7 g | 0.3 h |
 | 4 | `arova_v3_deck_gap70.stl` | 1 | 150 × 195 × 14 | as saved | 94 g | 4.2 h / 1.8 h |
 
 Print #4 (the gap 70 deck) **only if there is printer time left**. It is the backup deck for very short, steep beam waves.
 
 \* Watertight profile (4 walls). Times are for a typical printer / a fast CoreXY printer. They are estimates from the STL surface area and volume (`print_estimate.py`). **The slicer's number wins.**
 
-**All 4 parts on separate printers at the same time:** about 3.2–7.6 h in total. **One printer, one part after another:** about 8.4–20 h. Collection is Sunday 08:00, so there is time.
+**All 4 parts on separate printers at the same time:** about 3.3–7.8 h in total. **One printer, one part after another:** about 8.6–21 h. Collection is Sunday 08:00, so there is time.
 
 ## Bed size and placement
 - The gap 100 deck is **150 × 225 mm**. It needs a bed of at least 226 mm in one direction, e.g. Prusa MK4 (250 × 210) with the 225 mm side along X, or Bambu X1/P1 (256 × 256). It does **not** fit a 220 × 220 bed (Ender-3). On such a printer, print the **gap 70 deck** (150 × 195) instead.
@@ -25,6 +25,7 @@ Print #4 (the gap 70 deck) **only if there is printer time left**. It is the bac
 - Layer 0.2 mm, nozzle 0.4 mm, PLA at its normal temperatures.
 - **Walls: 4**, **top: 6 layers, bottom: 5 layers**, **flow +5 %** (or line width 0.45 mm) - the hulls are sealed air boxes and must not leak. Prusa recommends at least 3–4 perimeters for watertight prints, and a 2025 PLA study found that thin walls or low flow always leaked. 3 walls is the minimum (140 g, 2.6–6.3 h per hull).
 - **Infill: 5 % gyroid** (or lightning).
+- **Electronics pocket:** each hull has a 64 × 40 × 22 mm pocket in its top face. It is a dent, not a hole into the sealed hull. On the bed it prints as a **40 mm bridge** over the pocket: keep bridging enabled (default in all slicers); no support needed.
 - **No supports, do not flip.** The files are already in print orientation (checked: 0 cm² of overhang steeper than 45°).
 - Brim only if corners lift. **Elephant-foot compensation 0.15–0.2 mm if available.** The hulls also have a 0.8 mm chamfer on the bed edge for the same reason.
 
