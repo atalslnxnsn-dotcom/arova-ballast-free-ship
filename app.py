@@ -10,6 +10,9 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+import importlib
+import hydro
+importlib.reload(hydro)   # a git update on Streamlit Cloud reruns app.py but keeps the old hydro module in memory
 from hydro import (Hull, Cargo, analyse, seawater_density, WATER_PRESETS, ROUTES_BY_DEST, route_profile,
                    suggest_rebalance, simulate_roll, roll_stats, drag_force, load_limit, check_suggestion,
                    pick_route, wave_motions, roll_decay, k_from_period, inclining_gm, unload_to_fit,
