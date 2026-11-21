@@ -64,3 +64,12 @@ Every claim below is backed by one of two things: a number our own scripts produ
 | Stern motors, shaft tubes, servo | Rejected | No propulsion is tested; every shaft through a hull is a leak path; the rubric gives no extra points for servos |
 | Open hull shells closed by a screwed deck | Rejected | The deck seam becomes the waterline seal; our hulls are closed solids that cannot flood |
 | Wider hulls for capacity (Print Assembly is 172 mm wide with 124 mm spacing) | **Taken further** | Our sweep chose 60 mm demihulls with a 100 mm gap (225 mm overall): highest load limit and wave margin inside the 250 mm limit |
+
+## 7. Tested and rejected: smaller bow rocker (16 → 8 mm)
+- A research note suggested a smaller keel rocker to regain waterline length and cut resistance.
+- **Measured on our geometry:** the rocker tip rises only 16 mm, and the draught is 23–33 mm. The whole keel is already underwater, so the waterline length stays 235 mm either way.
+- The change also made the ship slightly worse:
+  - load limit 918 → 895 g
+  - lowest freeboard at 400 g 36.6 → 35.9 mm
+  - safe wave height at 400 g (damping 0.10) 35 → 30 mm
+- Decision: kept 16 mm (`challenge_check.py`, `wave_map.py`).
