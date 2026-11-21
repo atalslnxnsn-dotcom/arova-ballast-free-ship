@@ -237,11 +237,14 @@ for load in (centre, off, []):
     a_, b_ = analyse(cat, load, 1000), analyse(cat_tab, load, 1000)
     assert isclose(a_.draft, b_.draft, rel_tol=1e-9) and isclose(a_.gm, b_.gm, rel_tol=1e-9)
     assert isclose(a_.gm_long, b_.gm_long, rel_tol=1e-9) and isclose(a_.reserve_buoyancy_kg, b_.reserve_buoyancy_kg)
-# 2) v3 table agrees with make_v3's own draught solver (gap 70: 251 g ship + 250 g -> 25.3 mm)
+# 2) v3 table agrees with make_v3's own (independent, step-width) draught solver: 251 g ship + 250 g, gap 70
+import sys as _sys
+_sys.path.insert(0, "print/v3")
+import make_v3 as _mv3
 assert "2 hulls, gap 70 mm" in v3_configs()
 v3 = load_v3_hull("2 hulls, gap 70 mm", mass=0.251)
 r3 = analyse(v3, [Cargo("load", 0.25, v3.deck_xc, 0, 0.05, 0.04, 0.025)], 1000)
-assert abs(r3.draft * 1000 - 25.3) < 0.4, r3.draft
+assert abs(r3.draft * 1000 - _mv3.draft_for(501, 70.0)) < 0.4, (r3.draft, _mv3.draft_for(501, 70.0))
 assert r3.lcb < 0                                             # fine bow -> buoyancy centre aft of midship
 # 3) Trim is measured against the LCB, and the rebalance suggestion levels the v3 hull
 items3 = [Cargo("a", 0.2, v3.deck_xc + 0.03, 0.01, 0.04, 0.04, 0.02)]

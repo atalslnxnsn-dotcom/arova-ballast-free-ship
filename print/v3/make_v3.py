@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from make_stl import check, extrude, write_stl, pla_mass_g  # reuse the team's tested STL helpers
 
-L, B, D = 235.0, 50.0, 70.0          # mm demihull length, beam, depth (deck at z = D); 70 keeps >35 mm freeboard at 400 g for wave tests
+L, B, D = 235.0, 60.0, 70.0          # mm demihull length, beam, depth. v4: B 50 -> 60 (sweep: load limit 786 -> 918 g, safe wave H 30 -> 35 mm, off-centre heel 5.6 -> 3.7 deg)
 BILGE_R = 6.0                         # mm bilge radius
 BOW_START, ROCKER_START = 150.0, 185.0  # mm from transom: where the bow taper / keel rise begin
 ROCKER_H = 16.0                       # mm keel rise at the bow tip

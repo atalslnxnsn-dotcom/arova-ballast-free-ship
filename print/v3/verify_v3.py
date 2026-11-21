@@ -273,7 +273,7 @@ def main():
             gap = float(d.stem.split("gap")[-1])
             c = (gap + (h_w[1] - h_w[0])) / 2
             ys = width_at(deck, 9.0, 1, 149)       # flange zone (plate 0-3 mm, flanges 3-15 mm)
-            inner = sorted(y for y in {round(v, 3) for t in deck for p in t for v in [p[1]]} if c - 30 < y < c + 30)
+            inner = sorted(y for y in {round(v, 3) for t in deck for p in t for v in [p[1]]} if abs(y - c) < (h_w[1] - h_w[0]) / 2 + 8)   # window scales with the hull width
             slot = inner[-2] - inner[1] if len(inner) >= 4 else float("nan")
             clear = (slot - (h_w[1] - h_w[0])) / 2
             report.append(f"{d.name}: slot {slot:.2f} mm for hull {h_w[1]-h_w[0]:.2f} mm -> clearance {clear:.2f} mm per side")

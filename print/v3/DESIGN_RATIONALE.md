@@ -6,17 +6,17 @@ Every claim below is backed by one of two things: a number our own scripts produ
 
 ## 1. Stability without ballast comes from hull spacing
 - **Evidence (`challenge_check.py`):** with 400 g centred, the transverse GM rises with the gap between the hulls:
-  - gap 40 mm: 13 mm
-  - gap 70 mm: 56 mm
-  - gap 100 mm: 109 mm
+  - gap 40 mm: 38 mm
+  - gap 70 mm: 91 mm
+  - gap 100 mm: 156 mm
 
   This uses the same two hulls; only the deck changes.
 - **Why:** the waterplane inertia of two hulls grows with the square of their spacing. For two box hulls,
   BM = (b² + 3s²) / (12T), where b is the hull beam, s the hull centre spacing and T the draught (derived in our
   research notes from BM = I_T / V). Ballast is not needed: the hull layout gives the righting moment
   ([Britannica, metacentric stability](https://www.britannica.com/technology/naval-architecture/Metacentric-stability)).
-- **Demo:** one demihull alone with 50 g on top has GM −28.6 mm and tips over. The catamaran with 150 g has
-  GM 192 mm (`challenge_check.py`).
+- **Demo:** one demihull alone with 50 g on top has GM −22.2 mm and tips over. The catamaran with 150 g has
+  GM 256 mm (`challenge_check.py`).
 
 ## 2. Why ballast-free matters (sustainability)
 - Ballast water moves invasive species between ecosystems. IMO's Ballast Water Management Convention entered
@@ -30,11 +30,11 @@ Every claim below is backed by one of two things: a number our own scripts produ
 - **Light ship = less power.** At a given speed, power scales with displacement^(2/3) (Admiralty coefficient,
   [Wärtsilä](https://wartsila.com/encyclopedia/term/admiralty-coefficient-admiralty-constant)). We cut the deck from
   3 to 2 mm after a strength check: 25 g lighter, still a 10× bending margin (`make_v3.py` comment, FIKIRLER.md).
-  The whole ship is about 355 g of PLA (`print_estimate.py`), and the parts are reusable and swappable.
+  The whole ship is about 392 g of PLA (`print_estimate.py`), and the parts are reusable and swappable.
 
 ## 3. Safe in waves, and we know where the limit is
 - **Evidence (`wave_map.py`):** over wave heights of 5–40 mm and periods of 0.4–1.6 s, at 250 g and 400 g, both decks
-  keep the cargo deck dry and roll far below the windward-hull lift-off angle up to **H = 30 mm at every period**.
+  keep the cargo deck dry and roll far below the windward-hull lift-off angle up to **H = 30 mm at every period** (35 mm with 400 g on board).
 - **Honest limit:** very short, steep beam waves (T ≈ 0.4–0.5 s, H ≥ 35 mm) hit the catamaran's roll period. The
   risk disappears with a roll damping of 0.20 instead of 0.10. Answer: the **gap 70 backup deck**, swapped in a minute.
 - The hulls are sealed solids. Water over the bow tips is shed and cannot flood the ship.
@@ -49,7 +49,18 @@ Every claim below is backed by one of two things: a number our own scripts produ
   - roll decay → measured period and damping
 
 ## 5. Design intent (to be confirmed by CFD and the tank)
-- Slender demihulls (length/beam ≈ 4.7) with a fine entry and a raised, wave-piercing bow: expected lower wave
+- Slender demihulls (length/beam ≈ 3.9; widened from 4.7 to favour load capacity and wave stability, the two tests the event scores directly) with a fine entry and a raised, wave-piercing bow: expected lower wave
   resistance and less slamming than a box hull of the same displacement. The judges' CFD leaderboard is the test.
   Send `arova_v3_CFD_hulls_gap100.stl`.
 - Rounded bilges (6 mm) instead of sharp corners: expected less flow separation in turbulent water.
+
+## 6. What we took from the team's other concepts (Electrical Layout, Print Assembly) - and why
+| Idea | Decision | Reason |
+|---|---|---|
+| Battery low on the centreline, IMU flat on a rigid pad with its forward axis marked, strain relief on every cable | **Taken** | Small mass changes, much better measurements; the electronics cradle sits on the deck centreline |
+| Leak test of the empty hulls first, then trim check with dummy loads, then electronics | **Taken** | Matches our validation plan (tab 5 of the app) |
+| Battery in a bay recessed 28 mm below the deck | Not taken | Measured: a 50 g pack 28 mm lower raises GM by only ~1.7 mm on a 156 mm GM, but adds a part close to the water that must be sealed |
+| 270 mm hull length (Electrical Layout) | Rejected | Breaks the 250 × 250 × 250 mm rule |
+| Stern motors, shaft tubes, servo | Rejected | No propulsion is tested; every shaft through a hull is a leak path; the rubric gives no extra points for servos |
+| Open hull shells closed by a screwed deck | Rejected | The deck seam becomes the waterline seal; our hulls are closed solids that cannot flood |
+| Wider hulls for capacity (Print Assembly is 172 mm wide with 124 mm spacing) | **Taken further** | Our sweep chose 60 mm demihulls with a 100 mm gap (225 mm overall): highest load limit and wave margin inside the 250 mm limit |
