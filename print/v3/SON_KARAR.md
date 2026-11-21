@@ -1,11 +1,11 @@
-# Arova — son karar (21 Kasım, 12:35)
+# Arova — son karar (21 Kasım, 12:40)
 
 Bu dosya üç kaynağı birleştiriyor: üç tasarım (bizim v3/v4, "Electrical Layout", "Print Assembly"), üç araştırma raporu ve kendi ölçümlerimiz (`verify_v3.py`, `challenge_check.py`, `wave_map.py`, parametre taraması). Tüm sayılar 4 duvar baskı, gap 100, 400 g yük ve 40 g elektronik içindir; aksi yazılıysa belirtildi.
 
 ## SEÇİLEN: v4 + gövde cepleri
 | Karar | Değer | Neden |
 |---|---|---|
-| Gövde | 2 × 235 × 60 × 70 mm, kapalı, sivri ve kıvrık burun (16 mm) | Parametre taramasında yük ve dalga açısından en iyisi 60 mm genişlik çıktı: yük limiti 786 → 918 g, kayık yükte yatma 5.6° → 3.7° (3 duvar bazında) |
+| Gövde | 2 × 235 × 60 × **80** mm, kapalı, sivri ve kıvrık burun (16 mm) | Parametre taramasında yük ve dalga açısından en iyisi 60 mm genişlik çıktı: yük limiti 786 → 918 g, kayık yükte yatma 5.6° → 3.7° (3 duvar bazında) |
 | Gövde arası | 100 mm (toplam 225 mm) | Kayık yükte en az yatma (gap 70'te 6.5°). 250 mm sınırının içinde |
 | Güverte | 2 mm takılır plaka | Dayanım payı 10 kat; 3 mm'ye göre 25 g hafif ve ağırlık merkezi daha alçak |
 | Elektronik | **Gövdelerin üst yüzündeki ceplere gömülü** (64 × 40 × 22, güvertenin altında) | En alçak konum (KG 45.4 mm). Sıçrayan sudan tam korunuyor. Gövdenin kapalı hava hacmine açılmıyor, yani sızıntı yolu yok |
@@ -13,8 +13,10 @@ Bu dosya üç kaynağı birleştiriyor: üç tasarım (bizim v3/v4, "Electrical 
 | Yedek | gap 70 güvertesi | Çok kısa dik yan dalga varsa ya da yazıcı tablası 220 mm ise |
 
 **Sonuçlar:**
-- 400 g'da su çekimi 37.6 mm, serbest borda 32 mm, GM 135 mm.
-- Yük limiti 803 g. Kargo 20 mm kaydırılınca yatma 3.8°.
+- 400 g'da su çekimi 39.0 mm, serbest borda 40.5 mm, GM 122 mm.
+- Yük limiti 911 g. Kargo 20 mm kaydırılınca yatma 4.0°.
+- En dik dalgada (H 40 mm) güverte kuru (+15 mm pay) ve gemi devrilmiyor (+3.1°).
+- **Derinlik 70 → 80 mm (12:37):** yük limiti +%13; en dik dalgada güverte uçlarına gelen su payı −2.2 → +15.3 mm. Bedeli gövde başına +18 g ve 20–50 dk fazla baskı.
 - Dalgada her periyotta 30 mm'ye kadar güvenli; yalpa sönümü 0.20 ise 35 mm.
 - Dosyaların hepsi su geçirmez, 250 mm içinde ve desteksiz yüzeyi yok.
 - Hidrostatik değerler mesh ile %0.35 içinde uyuşuyor.
@@ -44,3 +46,14 @@ Bu dosya üç kaynağı birleştiriyor: üç tasarım (bizim v3/v4, "Electrical 
 4. **Yalpa sönümü testi:** 10–15° yatır, bırak, MPU6050 ile kaydet. Uygulamanın 4. sekmesi sönümü (ζ) hesaplıyor. ζ ≥ 0.15 ise dalga riski haritadakinden de küçük.
 5. **Meyil deneyi:** Uygulamanın 5. sekmesi gerçek ağırlık merkezini hesaplıyor.
 6. **Kablolar:** Güverte plakasında her cebin üstüne 5–6 mm delik aç; kablolar bu deliklerden iki cebi birbirine bağlar.
+
+## Elektrik bağlantısı (iki cep arasında)
+- **Elektronik cebi:** Nano + MPU6050.
+  - MPU VCC → Nano 5V, GND → GND, SDA → A4, SCL → A5.
+  - GY-521 kartının kendi regülatörü var, 5 V ile beslenebilir.
+- **Testlerde güç ve veri:** Nano'yu **USB kablosuyla dizüstüne bağlayın**. Aynı kablo hem gücü verir hem veriyi taşır (`tools/log_serial.py`). Kablo cebin üstündeki güverte deliğinden çıkar ve gemiyi çekmeyecek kadar gevşek, havadan bir askı gibi tutulur.
+- **⚠️ 2×AA (3 V) Nano'yu çalıştırmaz.** Klasik Nano 5 V ister; 3 V'ta resetlenir ya da hatalı çalışır.
+  - Kablosuz çalışma gerekiyorsa 4×AA (≈6 V) ya da 9 V pili **VIN** pinine bağlayın. Pil diğer cepte durur.
+  - İki kablo (kırmızı → VIN, siyah → GND), iki güverte deliğinden geçip güverte üstünde bantlanır. Araya küçük bir anahtar konabilir.
+- **Delikler:** Güverte plakasında her cebin üstüne **5–6 mm** delik. Cepler su hattının ~19 mm üstünde; deliklerin etrafı bant ya da sıcak silikonla kapatılır.
+- **Pil kullanılmazsa:** Diğer cebe aynı ağırlıkta bir yük (≈15 g) konursa denge simetrik kalır. Konmazsa fark ihmal edilebilir: ~10 g, 80 mm yanda → < 0.2° yatma.

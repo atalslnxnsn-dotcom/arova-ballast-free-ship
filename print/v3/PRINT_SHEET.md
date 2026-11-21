@@ -5,7 +5,7 @@
 ## What to print (priority order)
 | # | File | Qty | Size (mm) | On the bed | Est. PLA each* | Est. time each* |
 |---|---|---|---|---|---|---|
-| 1 | `arova_v3_demihull_x2.stl` | **2** | 235 × 60 × 70 | **as saved**: flat top face down, keel up | 175 g | 7.8 h / 3.3 h |
+| 1 | `arova_v3_demihull_x2.stl` | **2** | 235 × 60 × 80 | **as saved**: flat top face down, keel up | 193 g | 8.6 h / 3.6 h |
 | 2 | `arova_v3_deck_gap100.stl` | 1 | 150 × 225 × 14 | as saved: plate down, flanges up | 105 g | 4.7 h / 2.0 h |
 | 3 | `arova_v3_electronics_cradle.stl` (optional, the electronics now sit in the hull pockets) | 1 | 60 × 27 × 12 | as saved: base down | 7 g | 0.3 h |
 | 4 | `arova_v3_deck_gap70.stl` | 1 | 150 × 195 × 14 | as saved | 94 g | 4.2 h / 1.8 h |
@@ -16,7 +16,7 @@ Print #4 (the gap 70 deck) **only if there is printer time left**. It is the bac
 
 \* Watertight profile (4 walls). Times are for a typical printer / a fast CoreXY printer. They are estimates from the STL surface area and volume (`print_estimate.py`). **The slicer's number wins.**
 
-**All 4 parts on separate printers at the same time:** about 3.3–7.8 h in total. **One printer, one part after another:** about 8.6–21 h. Collection is Sunday 08:00, so there is time.
+**All 4 parts on separate printers at the same time:** about 3.6–8.6 h in total. **One printer, one part after another:** about 9.3–22 h. Collection is Sunday 08:00, so there is time.
 
 ## Bed size and placement
 - The gap 100 deck is **150 × 225 mm**. It needs a bed of at least 226 mm in one direction, e.g. Prusa MK4 (250 × 210) with the 225 mm side along X, or Bambu X1/P1 (256 × 256). It does **not** fit a 220 × 220 bed (Ender-3). On such a printer, print the **gap 70 deck** (150 × 195) instead.
