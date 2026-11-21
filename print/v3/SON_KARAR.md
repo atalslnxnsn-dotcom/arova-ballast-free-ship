@@ -45,15 +45,20 @@ Bu dosya üç kaynağı birleştiriyor: üç tasarım (bizim v3/v4, "Electrical 
 3. **Güverte:** 4 lastik bant + birleşim yerine bant. Dalga testinden önce salla ve bük.
 4. **Yalpa sönümü testi:** 10–15° yatır, bırak, MPU6050 ile kaydet. Uygulamanın 4. sekmesi sönümü (ζ) hesaplıyor. ζ ≥ 0.15 ise dalga riski haritadakinden de küçük.
 5. **Meyil deneyi:** Uygulamanın 5. sekmesi gerçek ağırlık merkezini hesaplıyor.
-6. **Kablolar:** Güverte plakasında her cebin üstüne 5–6 mm delik aç; kablolar bu deliklerden iki cebi birbirine bağlar.
+6. **Kablo:** Güverte plakasında cep 1'in üstüne 5–6 mm delik aç; USB-C kablo buradan çıkar (ayrıntı aşağıda).
 
-## Elektrik bağlantısı (iki cep arasında)
-- **Elektronik cebi:** Nano + MPU6050.
-  - MPU VCC → Nano 5V, GND → GND, SDA → A4, SCL → A5.
-  - GY-521 kartının kendi regülatörü var, 5 V ile beslenebilir.
-- **Testlerde güç ve veri:** Nano'yu **USB kablosuyla dizüstüne bağlayın**. Aynı kablo hem gücü verir hem veriyi taşır (`tools/log_serial.py`). Kablo cebin üstündeki güverte deliğinden çıkar ve gemiyi çekmeyecek kadar gevşek, havadan bir askı gibi tutulur.
-- **⚠️ 2×AA (3 V) Nano'yu çalıştırmaz.** Klasik Nano 5 V ister; 3 V'ta resetlenir ya da hatalı çalışır.
-  - Kablosuz çalışma gerekiyorsa 4×AA (≈6 V) ya da 9 V pili **VIN** pinine bağlayın. Pil diğer cepte durur.
-  - İki kablo (kırmızı → VIN, siyah → GND), iki güverte deliğinden geçip güverte üstünde bantlanır. Araya küçük bir anahtar konabilir.
-- **Delikler:** Güverte plakasında her cebin üstüne **5–6 mm** delik. Cepler su hattının ~19 mm üstünde; deliklerin etrafı bant ya da sıcak silikonla kapatılır.
-- **Pil kullanılmazsa:** Diğer cebe aynı ağırlıkta bir yük (≈15 g) konursa denge simetrik kalır. Konmazsa fark ihmal edilebilir: ~10 g, 80 mm yanda → < 0.2° yatma.
+## Elektrik bağlantısı (Discord malzeme listesine göre, 21 Kasım 12:50)
+Etkinlikte verilen parçalar: Arduino Nano, MPU6050, AA pil + pil yuvası, **USB-C test kablosu**, jumper kablolar, bant, sıcak silikon, hortum. Listede SD kart, Bluetooth ya da kablosuz modül **yok**.
+
+**Sonuç: pil kullanmıyoruz, iki cep arasında kablo da yok.**
+- MPU6050 verisini kaydetmenin tek yolu Nano'yu USB ile dizüstüne bağlamak (`tools/log_serial.py`). Bu kablo Nano'ya gücü de veriyor. Pil eklemek veri kazandırmıyor, yalnızca ağırlık ve kablo ekliyor.
+- **Cep 1:** Nano + MPU6050. MPU'yu Nano'ya 4 dişi-dişi jumper ile bağlayın: VCC → 5V, GND → GND, SDA → A4, SCL → A5. **Breadboard kullanmayın**, cebe (64 × 40 mm) sığmaz. MPU'yu cebin tabanına sıcak silikonla, oku geminin boyuna doğru yapıştırın.
+- **Cep 2:** boş ya da ≈15 g denge yükü (örneğin pul/vida bantlanmış). Konmazsa yatma < 0.2°.
+- **USB-C kablo:** Cep 1'in üstündeki 5–6 mm güverte deliğinden çıkar. Deliğin etrafı bant ya da sıcak silikonla kapatılır. Kablo havada, gevşek asılı durmalı ki gemiyi çekmesin; istenirse listedeki hortum kılıf olarak geçirilir.
+- **Önce kontrol:** Nano'nun soketi USB-C mi? (Verilen kablolar USB-C, yani büyük ihtimalle evet. Mini-B ise görevliden uygun kablo isteyin.)
+
+**Yalnızca jüri kablosuz çalışma isterse (yedek plan):**
+- 2×AA (3 V) Nano'yu çalıştırmaz.
+- 4×AA (iki 2'li yuva seri ya da bir 4'lü yuva) → **VIN** pinine. 3×AA → **5V** pinine. 4×AA'yı asla 5V pinine bağlamayın (≈6.4 V, Nano'yu bozar).
+- Pil cep 2'de durur. İki kablo (kırmızı → VIN/5V, siyah → GND) güverte deliklerinden geçer, güverte üstünde bantlanır. Bağlamadan önce multimetreyle voltajı ölçün.
+- Bu durumda veri kaydı olmaz (kaydedecek yer yok); sadece gemi elektronikle çalışmış olur.
